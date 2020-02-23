@@ -4,7 +4,7 @@ import torchvision.transforms as transforms
 import numpy as np
 
 # use 80% data for training, 20% for validation
-def load_data(train_validation_split=0.8, data_batch_size=512):
+def load_data(data_batch_size, train_validation_split=0.8):
 
     # define data transform
     train_transform = transforms.Compose([

@@ -31,11 +31,9 @@ class DenseNet(nn.Module):
                                                         padding=1,
                                                         bias=False))
 
-        all_blocks = []
         for i in range(len(self.stages)):
             ### Dense-block i
-            block = self.add_block(i, all_blocks)
-            all_blocks.append(block)
+            self.add_block(i)
 
         ### Linear layer
         self.classifier = nn.Linear(self.num_features, args.num_classes)
@@ -52,21 +50,19 @@ class DenseNet(nn.Module):
                 m.bias.data.zero_()
 
 
-    def add_block(self, i, all_blocks):
+    def add_block(self, i):
         ### Check if ith is the last one
         last = (i == len(self.stages) - 1)
         block = _DenseBlock(
             num_layers=self.stages[i],
-            in_channels=self.num_features,
+            in_block_channels=self.num_features,
             growth_rate=self.growth[i],
-            args=self.args,
-            all_blocks=all_blocks
+            args=self.args
         )
         self.features.add_module('denseblock_%d' % (i + 1), block)
         self.num_features += self.stages[i] * self.growth[i]
         if not last:
-            trans = _Transition(in_channels=self.num_features,
-                                args=self.args)
+            trans = _Transition(args=self.args)
             self.features.add_module('transition_%d' % (i + 1), trans)
         else:
             self.features.add_module('norm_last',
@@ -75,7 +71,6 @@ class DenseNet(nn.Module):
                                      nn.ReLU(inplace=True))
             self.features.add_module('pool_last',
                                      nn.AvgPool2d(self.pool_size))
-        return block
 
     def forward(self, x):
         features = self.features(x)

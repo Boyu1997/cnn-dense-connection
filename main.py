@@ -16,7 +16,7 @@ def main(args):
     print ('Using device:', device)
 
     # load data
-    trainloader, validateloader, testloader, classes = load_data()
+    trainloader, validateloader, testloader, classes = load_data(args.bsize)
 
     # config for parallel gpu
     if args.parallel:

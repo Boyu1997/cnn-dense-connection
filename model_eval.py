@@ -57,7 +57,7 @@ print ('Using device:', device)
 densenet = DenseNet(args)   # baseline model
 densenet2 = DenseNet2(args)   # experiment model
 
-trainloader, validateloader, testloader, classes = load_data()
+trainloader, validateloader, testloader, classes = load_data(args.bsize)
 
 best_densenet_epoch = 60
 best_densenet = DenseNet(args)
