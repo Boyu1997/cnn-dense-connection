@@ -44,8 +44,8 @@ if __name__ == '__main__':
     # model config
     parser.add_argument('--stages',
         type=str,
-        default='14-14-14',
-        help='stages (e.g. 14-14-14)')
+        default='10-10-10',
+        help='stages (default: 10-10-10)')
     parser.add_argument('--growth',
         type=str,
         default='8-16-32',
