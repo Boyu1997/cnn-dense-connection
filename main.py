@@ -13,6 +13,7 @@ from train import train_model
 def main(args):
     print (args)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    args.device = device
     print ('Using device:', device)
 
     # load data

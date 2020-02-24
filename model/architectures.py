@@ -10,6 +10,7 @@ from .layers import Conv
 class _DenseLayer(nn.Module):
     def __init__(self, block_number, in_block_channels, last_transition_channels, i_layer, growth_rate, args):
         super(_DenseLayer, self).__init__()
+        self.args = args
         current_block_channels = growth_rate * i_layer
 
         '''dense connection index selection'''
@@ -39,7 +40,7 @@ class _DenseLayer(nn.Module):
         x_ = x
 
         # cnn with selected dense connections
-        x = torch.index_select(x, 1, torch.tensor(self.idx))
+        x = torch.index_select(x, 1, torch.tensor(self.idx).to(self.args.device))
         x = self.conv_1(x)
         x = self.conv_2(x)
 
@@ -59,6 +60,7 @@ class _DenseBlock(nn.Sequential):
 class _Transition(nn.Module):
     def __init__(self, in_block_channels, in_channels, out_channels, args):
         super(_Transition, self).__init__()
+        self.args = args
         self.idx = range(in_block_channels, in_block_channels+in_channels)
         self.conv = Conv(in_channels, out_channels,
                          kernel_size=1, groups=args.group_1x1)
@@ -68,7 +70,7 @@ class _Transition(nn.Module):
         x_ = x
 
         # transition conv
-        x = torch.index_select(x, 1, torch.tensor(self.idx))
+        x = torch.index_select(x, 1, torch.tensor(self.idx).to(self.args.device))
         x = self.conv(x)
 
         # avg pooling for all x
