@@ -63,7 +63,7 @@ def validate(model, device, validate_loader, criterion, one_batch):
     return validation_loss, validation_total, validation_correct
 
 
-def train_model(model, model_name, trainloader, validateloader, epochs, device, print_training_every=1, one_batch=False):
+def train_model(model, trainloader, validateloader, epochs, device, save_folder, print_training_every=1, one_batch=False):
 
     criterion = nn.CrossEntropyLoss().to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-2)
@@ -84,7 +84,7 @@ def train_model(model, model_name, trainloader, validateloader, epochs, device, 
         validation_loss, validation_total, validation_correct = validate(model, device, validateloader, criterion, one_batch)
 
         # save model
-        directory = './save/{:s}/train'.format(model_name)
+        directory = './save/{:s}/train'.format(save_folder)
         if not os.path.exists(directory):
             os.makedirs(directory)
         torch.save(model.state_dict(), '{:s}/epoch-{:02d}.pth'.format(directory, e+1))
@@ -106,6 +106,6 @@ def train_model(model, model_name, trainloader, validateloader, epochs, device, 
             'training_accuracy': training_accuracy_list,
             'validation_loss': validation_loss_list,
             'validation_accuracy': validation_accuracy_list}
-    f = open('./save/{:s}/train.json'.format(model_name),'w')
+    f = open('./save/{:s}/train.json'.format(save_folder),'w')
     f.write(json.dumps(dict))
     f.close()

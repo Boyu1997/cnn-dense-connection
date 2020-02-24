@@ -25,7 +25,7 @@ def main(args):
 
     # model training
     densenet = DenseNet(args)
-    train_model(densenet, 'densenet', trainloader, validateloader, 200, device, one_batch=args.one_batch)
+    train_model(densenet, trainloader, validateloader, args.ep, device, args.save_folder, one_batch=args.one_batch)
 
 
 
@@ -38,11 +38,6 @@ if __name__ == '__main__':
     parser.add_argument('--cross_block_rate',
         type=float,
         default=1,
-        help='enable cross-block connection (float range 0 to 1)')
-
-    parser.add_argument('--cross_block',
-        type=bool,
-        default=True,
         help='enable cross-block connection (float range 0 to 1)')
 
     # model config
@@ -66,6 +61,11 @@ if __name__ == '__main__':
         type=int,
         default=4,
         help='bottleneck')
+    parser.add_argument('--reduction',
+        type=float,
+        default=0.5,
+        help='transition reduction (default: 0.5)'
+    )
 
     # training config
     parser.add_argument('--lr',
@@ -96,6 +96,12 @@ if __name__ == '__main__':
         type=int,
         default=4,
         help='number of gpu.')
+
+    # file path
+    parser.add_argument('--save_folder',
+        type=str,
+        default='default',
+        help='folder name for saving result.')
 
     # parse args
     args, unparsed = parser.parse_known_args()
