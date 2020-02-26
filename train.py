@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import os
+import math
 import json
 
 
@@ -63,10 +64,11 @@ def validate(model, device, validate_loader, criterion, one_batch):
     return validation_loss, validation_total, validation_correct
 
 
-def train_model(model, trainloader, validateloader, epochs, device, save_folder, print_training_every=1, one_batch=False):
+def train_model(model, trainloader, validateloader, epochs, lr, device, save_folder, print_training_every=1, one_batch=False):
 
     criterion = nn.CrossEntropyLoss().to(device)
-    optimizer = torch.optim.Adam(model.parameters(), lr=1e-2)
+    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+    running_lr = lr
 
     training_loss_list = []
     training_accuracy_list = []
@@ -99,7 +101,13 @@ def train_model(model, trainloader, validateloader, epochs, device, save_folder,
                   "Accuracy: {:.3f}".format(training_correct/training_total),
                   ")  Validate (Loss: {:.4f}".format(validation_loss/len(validateloader)),
                   "Accuracy: {:.3f}".format(validation_correct/validation_total),
+                  "Running Learning Rate: {:.3f}".format(running_lr),
                   ")")
+
+        # adjust learning rate for next epoch
+        running_lr = 0.5 * lr * (1 + math.cos(math.pi * (e % epochs) / epochs)) # cosine lr decay
+        for param_group in optimizer.param_groups:
+            param_group['lr'] = running_lr
 
     # save loss and accuracy
     dict = {'training_loss': training_loss_list,

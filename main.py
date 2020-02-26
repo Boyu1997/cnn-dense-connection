@@ -26,7 +26,7 @@ def main(args):
 
     # model training
     densenet = DenseNet(args)
-    train_model(densenet, trainloader, validateloader, args.ep, device, args.save_folder, one_batch=args.one_batch)
+    train_model(densenet, trainloader, validateloader, args.ep, args.lr, device, args.save_folder, one_batch=args.one_batch)
 
 
 
