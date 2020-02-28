@@ -71,11 +71,11 @@ if __name__ == '__main__':
     # training config
     parser.add_argument('--lr',
         type=float,
-        default=1e-1,
+        default=1e-2,
         help='learning rate.')
     parser.add_argument('--ep',
         type=int,
-        default=200,
+        default=120,
         help='number of epochs.')
     parser.add_argument('--bsize',
         type=int,
