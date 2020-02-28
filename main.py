@@ -26,7 +26,7 @@ def main(args):
 
     # model training
     densenet = DenseNet(args)
-    train_model(densenet, trainloader, validateloader, args.ep, args.lr, device, args.save_folder, one_batch=args.one_batch)
+    train_model(densenet, trainloader, validateloader, device, args)
 
 
 
@@ -36,32 +36,44 @@ if __name__ == '__main__':
     # cross-block enable
     # 0 for disable cross-block connection
     # rate between 0 and 1
-    parser.add_argument('--cross_block_rate',
+    parser.add_argument(
+        '--cross_block_rate',
         type=float,
         default=1,
-        help='enable cross-block connection (float range 0 to 1)')
+        help='enable cross-block connection (float range 0 to 1, default: 0.5)'
+    )
 
     # model config
-    parser.add_argument('--stages',
+    parser.add_argument(
+        '--stages',
         type=str,
         default='10-10-10',
-        help='stages (default: 10-10-10)')
-    parser.add_argument('--growth',
+        help='stages (default: 10-10-10)'
+    )
+    parser.add_argument(
+        '--growth',
         type=str,
         default='8-16-32',
-        help='growth rates')
-    parser.add_argument('--group_1x1',
+        help='growth rates (for each stage, default: 8-16-32)'
+    )
+    parser.add_argument(
+        '--group_1x1',
         type=int,
         default=4,
-        help='1x1 group conv')
-    parser.add_argument('--group_3x3',
+        help='1x1 group conv (default: 4)'
+    )
+    parser.add_argument(
+        '--group_3x3',
         type=int,
         default=4,
-        help='3x3 group conv')
-    parser.add_argument('--bottleneck',
+        help='3x3 group conv (default: 4)'
+    )
+    parser.add_argument(
+        '--bottleneck',
         type=int,
         default=4,
-        help='bottleneck')
+        help='bottleneck (default: 4)'
+    )
     parser.add_argument('--reduction',
         type=float,
         default=0.5,
@@ -69,40 +81,61 @@ if __name__ == '__main__':
     )
 
     # training config
-    parser.add_argument('--lr',
+    parser.add_argument(
+        '--lr',
         type=float,
         default=1e-2,
-        help='learning rate.')
-    parser.add_argument('--ep',
+        help='learning rate (default: 0.01)'
+    )
+    parser.add_argument(
+        '--cosine_lr',
+        dest='cosine_lr',
+        action='store_true',
+        default=False,
+        help='use cosine decay learning rate'
+    )
+    parser.add_argument(
+        '--ep',
         type=int,
         default=120,
-        help='number of epochs.')
-    parser.add_argument('--bsize',
+        help='number of epochs (default: 120)'
+    )
+    parser.add_argument(
+        '--bsize',
         type=int,
         default=512,
-        help='batch size.')
-    parser.add_argument('--one_batch',   # one batch option for local testing on cpu
+        help='batch size (default: 512)'
+    )
+    parser.add_argument(
+        '--one_batch',   # one batch option for local testing on cpu
         dest='one_batch',
         action='store_true',
         default=False,
-        help='only train for one batch.')
+        help='only train for the first batch'
+    )
 
     # config for parallel gpu training
-    parser.add_argument('--parallel',
+    parser.add_argument(
+        '--parallel',
         dest='parallel',
         action='store_true',
         default=False,
-        help='use parallel gpu training.')
-    parser.add_argument('--n_gpu',
+        help='use parallel gpu training'
+    )
+    parser.add_argument(
+        '--n_gpu',
         type=int,
         default=4,
-        help='number of gpu.')
+        help='number of gpu if parallel (default: 4)'
+    )
 
     # file path
-    parser.add_argument('--save_folder',
+    parser.add_argument(
+        '--save_folder',
         type=str,
         default='default',
-        help='folder name for saving result.')
+        help='folder name for saving result (default: default)'
+    )
 
     # parse args
     args, unparsed = parser.parse_known_args()
