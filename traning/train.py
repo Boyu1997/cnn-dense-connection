@@ -6,6 +6,8 @@ import math
 import json
 import time
 
+from .helpers import get_optimizer, get_scheduler
+
 
 class MeanValueManager():
     def __init__(self):
@@ -26,7 +28,7 @@ class MeanValueManager():
         self.mean = self.sum / self.count
 
 
-def train(e, model, device, train_loader, optimizer, criterion, args):
+def train(model, device, train_loader, optimizer, scheduler, criterion, args):
     model.train()
     training_loss = MeanValueManager()
     training_accuracy = MeanValueManager()
@@ -37,14 +39,6 @@ def train(e, model, device, train_loader, optimizer, criterion, args):
 
         # get inputs and labels from data
         inputs, labels = inputs.to(device), labels.to(device)
-
-        # adjust learning rate using cosine decay
-        if args.cosine_lr:
-            batch_total = args.ep * len(train_loader)
-            batch_current = (e % args.ep) * len(train_loader) + i
-            running_lr = 0.5 * args.lr * (1 + math.cos(math.pi * batch_current / batch_total))
-            for param_group in optimizer.param_groups:
-                param_group['lr'] = running_lr
 
         # zero the parameter gradients
         optimizer.zero_grad()
@@ -60,6 +54,10 @@ def train(e, model, device, train_loader, optimizer, criterion, args):
 
         # record time for runing the batch
         training_time.update(time.time() - clock)
+
+        # use scheduler to update lr
+        if scheduler:
+            scheduler.step()
 
         # update loss and accuracy
         training_loss.update(loss.item())
@@ -99,7 +97,8 @@ def validate(model, device, validate_loader, criterion, args):
 def train_model(model, trainloader, validateloader, device, args, print_training_every=1):
 
     criterion = nn.CrossEntropyLoss().to(device)
-    optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
+    optimizer = get_optimizer(args, model)
+    scheduler = get_scheduler(args, optimizer)
 
     save_d = {
         'training_loss': [],
@@ -115,7 +114,7 @@ def train_model(model, trainloader, validateloader, device, args, print_training
     for e in range(args.ep):
 
         # train and validate
-        training_loss, training_accuracy, training_time, running_lr = train(e, model, device, trainloader, optimizer, criterion, args)
+        training_loss, training_accuracy, training_time, running_lr = train(model, device, trainloader, optimizer, scheduler, criterion, args)
         validation_loss, validation_accuracy = validate(model, device, validateloader, criterion, args)
 
         # save model

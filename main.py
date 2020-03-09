@@ -8,7 +8,7 @@ import torch.nn as nn   # nn for parallel
 # load model
 from model.densenet import DenseNet
 from data import load_data
-from train import train_model
+from traning.train import train_model
 
 def main(args):
     print (args)
@@ -82,17 +82,22 @@ if __name__ == '__main__':
 
     # training config
     parser.add_argument(
-        '--lr',
-        type=float,
-        default=1e-2,
-        help='learning rate (default: 0.01)'
+        '--optimizer',
+        type=str,
+        default='sgd',
+        help='optimizer (default: sgd)'
     )
     parser.add_argument(
-        '--cosine_lr',
-        dest='cosine_lr',
-        action='store_true',
-        default=False,
-        help='use cosine decay learning rate'
+        '--lr',
+        type=float,
+        default=1e-1,
+        help='learning rate (default: 0.1)'
+    )
+    parser.add_argument(
+        '--scheduler',
+        type=str,
+        default='exp',
+        help='learning rate scheduler (default: exp)'
     )
     parser.add_argument(
         '--ep',
