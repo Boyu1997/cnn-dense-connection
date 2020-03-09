@@ -85,7 +85,7 @@ if __name__ == '__main__':
         '--optimizer',
         type=str,
         default='sgd',
-        help='optimizer (default: sgd)'
+        help='optimizer (default: sgd; options: sgd, adam)'
     )
     parser.add_argument(
         '--lr',
@@ -96,8 +96,8 @@ if __name__ == '__main__':
     parser.add_argument(
         '--scheduler',
         type=str,
-        default='exp',
-        help='learning rate scheduler (default: exp)'
+        default='cos',
+        help='learning rate scheduler (default: cos; options: clr, exp, mlr, cos)'
     )
     parser.add_argument(
         '--ep',
