@@ -18,8 +18,8 @@ def get_scheduler(args, optimizer):
     elif args.scheduler =='exp':
         return torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.9999283, last_epoch=-1)
     elif args.scheduler =='mlr':
-        return torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[0.5 * args.max_step, 0.75 * args.max_step], gamma=0.1)
+        return torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[0.5*args.ep, 0.75*args.ep], gamma=0.1)
     elif args.scheduler =='cos':
-        return torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max = args.max_step)
+        return torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=args.ep)
     else:
         raise Exception('unknown scheduler')
