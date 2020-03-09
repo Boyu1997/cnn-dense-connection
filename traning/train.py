@@ -28,12 +28,11 @@ class MeanValueManager():
         self.mean = self.sum / self.count
 
 
-def train(model, device, train_loader, optimizer, scheduler, criterion, args):
+def train(model, device, train_loader, optimizer, criterion, args):
     model.train()
     training_loss = MeanValueManager()
     training_accuracy = MeanValueManager()
     training_time = MeanValueManager()
-    running_lr = args.lr
 
     for i, (inputs, labels) in enumerate(train_loader):
 
@@ -55,10 +54,6 @@ def train(model, device, train_loader, optimizer, scheduler, criterion, args):
         # record time for runing the batch
         training_time.update(time.time() - clock)
 
-        # use scheduler to update lr
-        if scheduler:
-            scheduler.step()
-
         # update loss and accuracy
         training_loss.update(loss.item())
         training_accuracy.update((torch.max(outputs.data,1)[1] == labels).tolist())
@@ -66,7 +61,7 @@ def train(model, device, train_loader, optimizer, scheduler, criterion, args):
         if args.one_batch:
             break
 
-    return training_loss.mean, training_accuracy.mean, training_time.sum, running_lr
+    return training_loss.mean, training_accuracy.mean, training_time.sum
 
 
 def validate(model, device, validate_loader, criterion, args):
@@ -114,8 +109,15 @@ def train_model(model, trainloader, validateloader, device, args, print_training
     for e in range(args.ep):
 
         # train and validate
-        training_loss, training_accuracy, training_time, running_lr = train(model, device, trainloader, optimizer, scheduler, criterion, args)
+        training_loss, training_accuracy, training_time = train(model, device, trainloader, optimizer, criterion, args)
         validation_loss, validation_accuracy = validate(model, device, validateloader, criterion, args)
+
+        # update lr and get running lr
+        if scheduler:
+            scheduler.step()
+            running_lr = scheduler.get_lr()[0]
+        else:
+            running_lr = args.lr
 
         # save model
         directory = './save/{:s}/train'.format(args.save_folder)

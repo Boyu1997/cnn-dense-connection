@@ -45,10 +45,8 @@ def plot_accuracy(ax, data, skip_first=20, title=None):
 # ]
 
 data_path_list = [
-    'condensenet-original',
-    'cbr=0.8-reduction=0.1',
-    'cbr=0.6-reduction=0.1',
-    'cbr=0.4-reduction=0.1'
+    'con-cbr=0.2-reduction=0.5',
+    'exp-cbr=0.2-reduction=0.5'
 ]
 
 
@@ -57,7 +55,7 @@ fig.suptitle('Traing Result for CondenseNet and CondenseNet Variations Under Cos
 subplot_idx = 1
 
 for data_path in data_path_list:
-    f = open('../save/save-cosine-lr/{:s}/train.json'.format(data_path),'r')
+    f = open('../save/{:s}/train.json'.format(data_path),'r')
     data = json.load(f)
     f.close()
 
