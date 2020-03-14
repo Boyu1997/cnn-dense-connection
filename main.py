@@ -42,6 +42,11 @@ if __name__ == '__main__':
         default=1,
         help='enable cross-block connection (float range 0 to 1, default: 0.5)'
     )
+    parser.add_argument('--end_block_reduction_rate',
+        type=float,
+        default=0.5,
+        help='transition reduction rate at the end of each dense block (default: 0.5)'
+    )
 
     # model config
     parser.add_argument(
@@ -73,11 +78,6 @@ if __name__ == '__main__':
         type=int,
         default=4,
         help='bottleneck (default: 4)'
-    )
-    parser.add_argument('--reduction',
-        type=float,
-        default=0.5,
-        help='transition reduction (default: 0.5)'
     )
 
     # training config

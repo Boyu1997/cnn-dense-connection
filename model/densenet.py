@@ -110,7 +110,7 @@ class DenseNet(nn.Module):
         # transition between blocks
         if block_number + 1 != len(self.args.stages):
             in_channels = self.args.stages[block_number] * self.args.growth[block_number]
-            out_channels = make_divisible(math.ceil(in_channels * self.args.reduction), self.args.group_1x1)
+            out_channels = make_divisible(math.ceil(in_channels * self.args.end_block_reduction_rate), self.args.group_1x1)
             trans = _Transition(in_block_channels=in_block_channels,
                                 in_channels=in_channels,
                                 out_channels=out_channels,
