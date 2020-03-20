@@ -27,7 +27,7 @@ def load_configuration(directory, config_file_name, device):
     args = Args(config, device)
     return args
 
-def test_model(model, loader, device):
+def test_model(model, loader, device, one_batch):
     correct = 0
     total = 0
     model.to(device)
@@ -44,6 +44,11 @@ def test_model(model, loader, device):
             _, predicted = torch.max(outputs.data, 1)
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
+
+            # break for loop if one batch
+            if one_batch:
+                break
+
     return correct / total
 
 
@@ -56,14 +61,14 @@ def get_parameter_count(model):
         perimeter_count += perimeter_count_in_layer
     return perimeter_count
 
-def model_eval(directory, config_file_name, state_dict_file_name, save_file_name):
+def model_eval(args):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print ('Using device:', device)
 
     # load the model
-    model_args = load_configuration(directory, config_file_name, device)
-    model = DenseNet(model_args)
-    model_state_dict = torch.load('{:s}/{:s}'.format(directory, state_dict_file_name), map_location=device)
+    model_config_args = load_configuration(args.directory, args.config_file_name, device)
+    model = DenseNet(model_config_args)
+    model_state_dict = torch.load('{:s}/{:s}'.format(args.directory, args.state_dict_file_name), map_location=device)
     model.load_state_dict(model_state_dict)
 
     # get performance
@@ -71,13 +76,12 @@ def model_eval(directory, config_file_name, state_dict_file_name, save_file_name
     eval_result = {}
 
     eval_result['parameter_size'] = get_parameter_count(model)
-    # eval_result['train_accuracy'] = test_model(model, trainloader, device)
-    # eval_result['validate_accuracy'] = test_model(model, validateloader, device)
-    # eval_result['test_accuracy'] = test_model(model, testloader, device)
-
+    eval_result['train_accuracy'] = test_model(model, trainloader, device, args.one_batch)
+    eval_result['validate_accuracy'] = test_model(model, validateloader, device, args.one_batch)
+    eval_result['test_accuracy'] = test_model(model, testloader, device, args.one_batch)
 
     print (eval_result)
-    f = open('{:s}/{:s}'.format(directory, save_file_name),'w')
+    f = open('{:s}/{:s}'.format(args.directory, args.save_file_name),'w')
     f.write(json.dumps(eval_result))
     f.close()
 
@@ -90,6 +94,13 @@ if __name__ == '__main__':
         type=int,
         default=128,
         help='model predict batch size'
+    )
+    parser.add_argument(
+        '--one_batch',   # one batch option for local testing on cpu
+        dest='one_batch',
+        action='store_true',
+        default=False,
+        help='only test for the first batch'
     )
     parser.add_argument(
         '--directory',
@@ -117,7 +128,4 @@ if __name__ == '__main__':
     )
     args, _ = parser.parse_known_args()
 
-    model_eval(directory=args.directory,
-               config_file_name=args.config_file_name,
-               state_dict_file_name=args.state_dict_file_name,
-               save_file_name=args.save_file_name)
+    model_eval(args)
