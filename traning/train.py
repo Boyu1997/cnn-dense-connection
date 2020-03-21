@@ -145,3 +145,13 @@ def train_model(model, trainloader, validateloader, device, args, print_training
     f = open('./save/{:s}/train.json'.format(args.save_folder),'w')
     f.write(json.dumps(save_d))
     f.close()
+
+    # save model configuration
+    save_args = {'cross_block_rate':args.cross_block_rate,
+                 'end_block_reduction_rate': args.end_block_reduction_rate,
+                 'stages': args.stages, 'growth': args.growth,
+                 'group_1x1': args.group_1x1, 'group_3x3': args.group_3x3,
+                 'bottleneck': args.bottleneck}
+    f = open('./save/{:s}/config.json'.format(args.save_folder),'w')
+    f.write(json.dumps(save_args))
+    f.close()
