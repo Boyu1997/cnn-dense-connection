@@ -3,6 +3,8 @@ import torchvision
 import torchvision.transforms as transforms
 import numpy as np
 
+from augment import AutoAugment, Cutout
+
 # use 80% data for training, 20% for validation
 def load_data(data_batch_size, train_validation_split=0.8):
 
@@ -10,7 +12,8 @@ def load_data(data_batch_size, train_validation_split=0.8):
     train_transform = transforms.Compose([
         transforms.RandomCrop(32, padding=4),
         transforms.RandomHorizontalFlip(),
-        transforms.RandomRotation(degrees=15),
+        AutoAugment(),
+        Cutout(),
         transforms.ToTensor(),
         transforms.Normalize((0.4914, 0.4824, 0.4467), (0.2471, 0.2435, 0.2616))
     ])
