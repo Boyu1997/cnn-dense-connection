@@ -14,9 +14,8 @@ python3 main.py --cross_block_rate=1 --end_block_reduction_rate=0.1 --save_folde
 
 # experiments to reduce cross-block connection base on condensenet
 python3 main.py --cross_block_rate=0.8 --end_block_reduction_rate=0.1 --save_folder="cbr=0.8-rdc=0.1"
-python3 main.py --cross_block_rate=0.6 --reduend_block_reduction_ratection=0.1 --save_folder="cbr=0.6-rdc=0.1"
+python3 main.py --cross_block_rate=0.6 --end_block_reduction_rate=0.1 --save_folder="cbr=0.6-rdc=0.1"
 python3 main.py --cross_block_rate=0.4 --end_block_reduction_rate=0.1 --save_folder="cbr=0.4-rdc=0.1"
-
 
 
 ''' testing '''
