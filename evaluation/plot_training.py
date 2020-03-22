@@ -39,23 +39,21 @@ def plot_accuracy(ax, data, skip_first=20, title=None):
 
 
 densenet_list = [
-    'densenet-original',
-    'cbr=0.2-reduction=0.5',
-    'cbr=0.4-reduction=0.5',
-    'cbr=0.6-reduction=0.5'
+    'densenet',
+    'cbr=0.2-rdc=0.5',
+    'cbr=0.4-rdc=0.5',
+    'cbr=0.6-rdc=0.5'
 ]
 
 condensenet_list = [
-    'condensenet-original',
-    'cbr=0.8-reduction=0.1',
-    'cbr=0.6-reduction=0.1',
-    'cbr=0.4-reduction=0.1'
+    'condensenet',
+    'cbr=0.8-rdc=0.1',
+    'cbr=0.6-rdc=0.1',
+    'cbr=0.4-rdc=0.1'
 ]
 
-custom_list = [
-    'con-cbr=0.2-reduction=0.5',
-    'exp-cbr=0.2-reduction=0.5'
-]
+# add custom filename list if used
+custom_list = []
 
 def plot_training(plot_title, directory, filename_list, filename_suffix):
     fig = plt.figure()
