@@ -102,8 +102,8 @@ if __name__ == '__main__':
     parser.add_argument(
         '--ep',
         type=int,
-        default=120,
-        help='number of epochs (default: 120)'
+        default=300,
+        help='number of epochs (default: 300)'
     )
     parser.add_argument(
         '--bsize',
