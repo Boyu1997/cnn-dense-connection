@@ -1,6 +1,8 @@
 import torch
 import torchvision
 import torchvision.transforms as transforms
+from torch.utils.data import Subset
+
 import numpy as np
 
 from augment import AutoAugment, Cutout
@@ -34,15 +36,16 @@ def load_data(data_batch_size, train_validation_split=0.8):
 
     indices = list(range(len(trainset)))
     train_len = int(len(trainset) * train_validation_split)
+    np.random.seed(0);   # use seed to make sure the random split is reproducible
     train_idx = np.random.choice(indices, size=train_len, replace=False)
     validation_idx = list(set(indices) - set(train_idx))
 
-    train_sampler = torch.utils.data.SubsetRandomSampler(train_idx)
-    validation_sampler = torch.utils.data.SubsetRandomSampler(validation_idx)
+    trainset = Subset(validateset, train_idx)
+    validateset = Subset(validateset, validation_idx)
 
-    trainloader = torch.utils.data.DataLoader(trainset, sampler=train_sampler,
+    trainloader = torch.utils.data.DataLoader(trainset, shuffle=True,
                                               batch_size=data_batch_size, num_workers=2)
-    validateloader = torch.utils.data.DataLoader(validateset, sampler=validation_sampler,
+    validateloader = torch.utils.data.DataLoader(validateset, shuffle=True,
                                                  batch_size=data_batch_size, num_workers=2)
 
     # load test dataset and make
