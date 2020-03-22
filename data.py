@@ -40,7 +40,7 @@ def load_data(data_batch_size, train_validation_split=0.8):
     train_idx = np.random.choice(indices, size=train_len, replace=False)
     validation_idx = list(set(indices) - set(train_idx))
 
-    trainset = Subset(validateset, train_idx)
+    trainset = Subset(trainset, train_idx)
     validateset = Subset(validateset, validation_idx)
 
     trainloader = torch.utils.data.DataLoader(trainset, shuffle=True,
