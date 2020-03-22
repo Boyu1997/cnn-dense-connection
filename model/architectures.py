@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 
 from random import sample
+random.seed(41)
 
 from .helpers import Conv, make_divisible
 
