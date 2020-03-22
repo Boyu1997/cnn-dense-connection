@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-from random import sample
+import random
 random.seed(41)
 
 from .helpers import Conv, make_divisible
@@ -47,7 +47,7 @@ class _DenseLayer(nn.Module):
         else:
             # select the dense connection indexs for previous block base on the cross-block connection rate
             sample_channels = in_block_channels - in_block_transition_channels
-            self.idx = sample(range(sample_channels), k=make_divisible(sample_channels*args.cross_block_rate, args.group_1x1))
+            self.idx = random.sample(range(sample_channels), k=make_divisible(sample_channels*args.cross_block_rate, args.group_1x1))
 
             # add all indexs for all last layer transition and current layers
             self.idx = [*self.idx, *range(sample_channels, in_block_channels+current_block_channels)]
