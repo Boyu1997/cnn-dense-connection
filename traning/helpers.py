@@ -23,3 +23,12 @@ def get_scheduler(args, optimizer):
         return torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=args.ep)
     else:
         raise Exception('unknown scheduler')
+
+def get_parameter_count(model):
+    perimeter_count = 0
+    for layer_perimeter in list(model.parameters()):
+        perimeter_count_in_layer = 1
+        for count in list(layer_perimeter.size()):
+            perimeter_count_in_layer *= count
+        perimeter_count += perimeter_count_in_layer
+    return perimeter_count

@@ -6,7 +6,7 @@ import math
 import json
 import time
 
-from .helpers import get_optimizer, get_scheduler
+from .helpers import get_optimizer, get_scheduler, get_parameter_count
 
 
 class MeanValueManager():
@@ -90,6 +90,8 @@ def validate(model, device, validate_loader, criterion, args):
 
 
 def train_model(model, trainloader, validateloader, device, args, print_training_every=1):
+
+    print ("Model parameter size: {:.2f}M".format(get_parameter_count(model)/1e6))
 
     criterion = nn.CrossEntropyLoss().to(device)
     optimizer = get_optimizer(args, model)
