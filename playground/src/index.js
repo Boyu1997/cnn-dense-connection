@@ -41,9 +41,6 @@ const imgDiv = input.append('rect')
 const imgCanvas = d3.select('#inputImg').append('canvas')
   .attr("width", 100)
   .attr("height", 100)
-  .style("position", "relative")
-  .style("top", '200px')
-  .style("left", '200px')
 
 
 let context = imgCanvas.node().getContext("2d");
@@ -52,8 +49,8 @@ let dx = data[0].length;
 let dy = data.length;
 let image = context.createImageData(dx, dy);
 
-for (let y = 0, p = -1; y < dy; ++y) {
-  for (let x = 0; x < dx; ++x) {
+for (let x = 0, p = -1; x < dx; ++x) {
+  for (let y = 0; y < dy; ++y) {
     let value = data[x][y];
     image.data[++p] = value;
     image.data[++p] = value;
