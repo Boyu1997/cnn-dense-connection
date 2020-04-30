@@ -15,7 +15,7 @@ function component() {
 var data = require('./data.json');
 
 const width = 800;
-const height = 600;
+const height = 400;
 
 
 const svg = d3.select('svg');
@@ -29,12 +29,10 @@ svg.style('margin', 'auto');
 
 
 // input image group
-const input = svg.append('g')
-  .attr('transform', 'translate(20, 300)')
-
-const imgDiv = input.append('rect')
-  .attr('width', 100)
-  .attr('height', 100)
+svg.append('rect')
+  .attr('transform', 'translate(20, 260)')
+  .attr('width', 80)
+  .attr('height', 80)
   .attr('stroke',"blue")
   .attr('fill', '#FFF')
 
@@ -66,8 +64,6 @@ context.putImageData(image, 0, 0);
 
 
 
-
-
 // define the arrowhead marker
 const arrowPoints = [[0, 0], [0, 10], [10, 5]];
 svg.append('defs')
@@ -85,65 +81,90 @@ svg.append('defs')
   .attr('stroke', 'black');
 
 
-// define connection lines
-const linePoints = [
-  [[120, 350], [195, 350]],
-  [[210, 350], [225, 350]],
-];
 
-linePoints.forEach(linePoint => {
+
+
+const plotData = [
+  {'fill':'#F62', 'boxs':2},
+  {'fill':'#F20', 'boxs':2},
+  {'fill':'#0E4', 'boxs':4},
+  {'fill':'#0A0', 'boxs':4},
+  {'fill':'#FF8', 'boxs':6},
+  {'fill':'#FD8', 'boxs':6}
+]
+
+const lineGenerator = d3.line()
+  .curve(d3.curveBasis);
+
+const l1 = 30;
+const l2 = 10;
+const d = 4;
+
+let x = 100;
+let y = 300;
+
+plotData.forEach(data => {
   svg.append('path')
-    .attr('d', d3.line()(linePoint))
+    .attr('d', d3.line()([[x, y], [x+l1, y]]))
     .attr('marker-end', 'url(#arrow)')
     .attr('stroke', 'black')
     .attr('fill', 'none')
     .attr('stroke-width', '3px');
-});
+  x = x + l1 + 5;
 
-
-// define dense-connection curves
-const curvePoints = [
-  [[160, 350], [180, 100], [500, 350]],
-  [[160, 350], [180, 120], [400, 350]],
-  [[160, 350], [180, 140], [300, 350]]
-];
-const lineGenerator = d3.line()
-  .curve(d3.curveBasis);
-
-curvePoints.forEach(curvePoint => {
-  const pathData = lineGenerator(curvePoint);
+  const temp = 580;
   svg.append('path')
-  	.attr('d', pathData)
+  	.attr('d', lineGenerator([[x-20, y], [x+10, 100], [temp, y]]))
     .attr('fill', 'none')
     .attr('stroke','#999')
     .attr('stroke-width', '3px')
     .attr('marker-end', 'url(#arrow)');
-});
 
 
-// define pooling boxs
-const poolings = [
-  {'fill':'#48F', 'data':[200, 340]}
-];
-poolings.forEach(pooling => {
   svg.append('rect')
-    .attr('transform', 'translate('+pooling['data'][0]+','+pooling['data'][1]+')')
+    .attr('transform', 'translate('+(x)+','+(y-10)+')')
     .attr('width', 10)
     .attr('height', 20)
     .attr('stroke', 'black')
-    .attr('fill', pooling['fill']);
-});
+    .attr('fill', '#48F');
+  x = x + 10;
 
-
-// define layer boxs
-const layers = [
-  {'fill':'#F00', 'data':[230, 325]}
-];
-layers.forEach(layer => {
-  svg.append('rect')
-    .attr('transform', 'translate('+layer['data'][0]+','+layer['data'][1]+')')
-    .attr('width', 50)
-    .attr('height', 50)
+  svg.append('path')
+    .attr('d', d3.line()([[x, y], [x+l2, y]]))
+    .attr('marker-end', 'url(#arrow)')
     .attr('stroke', 'black')
-    .attr('fill', layer['fill']);
+    .attr('fill', 'none')
+    .attr('stroke-width', '3px');
+  x = x + l2 + 5;
+
+  y = y - 2*data['boxs'];
+  for (var i = 0; i < data['boxs']; i++) {
+    svg.append('rect')
+      .attr('transform', 'translate('+(x)+','+(y-20)+')')
+      .attr('width', 40)
+      .attr('height', 40)
+      .attr('stroke', 'black')
+      .attr('fill', data['fill']);
+    x = x + 4;
+    y = y + 4;
+  }
+  x = x + 40 - 4;
+  y = y - 2*data['boxs'];
 });
+
+// // define dense-connection curves
+// const curvePoints = [
+//   [[130, 300], [180, 100], [500, 350]],
+//   [[130, 300], [180, 120], [400, 350]],
+//   [[130, 300], [180, 140], [300, 350]]
+// ];
+//
+// curvePoints.forEach(curvePoint => {
+//   const pathData = lineGenerator(curvePoint);
+//   svg.append('path')
+//   	.attr('d', pathData)
+//     .attr('fill', 'none')
+//     .attr('stroke','#999')
+//     .attr('stroke-width', '3px')
+//     .attr('marker-end', 'url(#arrow)');
+// });
