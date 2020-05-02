@@ -14,8 +14,8 @@ function component() {
 
 var data = require('./data.json');
 
-const width = 800;
-const height = 400;
+const width = 1080;
+const height = 520;
 
 
 const svg = d3.select('svg');
@@ -28,43 +28,40 @@ svg.style('display', 'block');
 svg.style('margin', 'auto');
 
 
-// input image group
+// input image
 svg.append('rect')
-  .attr('transform', 'translate(20, 260)')
+  .attr('transform', 'translate(20, 360)')
   .attr('width', 80)
   .attr('height', 80)
   .attr('stroke',"blue")
   .attr('fill', '#FFF')
 
-const imgCanvas = d3.select('#inputImg').append('canvas')
-  .attr("width", 100)
-  .attr("height", 100)
+// const imgCanvas = d3.select('#inputImg').append('canvas')
+//   .attr("width", 100)
+//   .attr("height", 100)
+//
+//
+// let context = imgCanvas.node().getContext("2d");
+//
+// let dx = data[0].length;
+// let dy = data.length;
+// let image = context.createImageData(dx, dy);
+//
+// for (let x = 0, p = -1; x < dx; ++x) {
+//   for (let y = 0; y < dy; ++y) {
+//     let value = data[x][y];
+//     image.data[++p] = value;
+//     image.data[++p] = value;
+//     image.data[++p] = value;
+//     image.data[++p] = 160;
+//   }
+// }
+//
+// console.log(image)
+// context.putImageData(image, 0, 0);
 
 
-let context = imgCanvas.node().getContext("2d");
-
-let dx = data[0].length;
-let dy = data.length;
-let image = context.createImageData(dx, dy);
-
-for (let x = 0, p = -1; x < dx; ++x) {
-  for (let y = 0; y < dy; ++y) {
-    let value = data[x][y];
-    image.data[++p] = value;
-    image.data[++p] = value;
-    image.data[++p] = value;
-    image.data[++p] = 160;
-  }
-}
-
-console.log(image)
-context.putImageData(image, 0, 0);
-
-
-
-
-
-// define the arrowhead marker
+// define arrowhead marker
 const arrowPoints = [[0, 0], [0, 10], [10, 5]];
 svg.append('defs')
   .append('marker')
@@ -74,59 +71,59 @@ svg.append('defs')
   .attr('refY', 5)
   .attr('markerWidth', 10)
   .attr('markerHeight', 10)
-  .attr('orient', 'auto-start-reverse')
+  // .attr('orient', 'auto-start-reverse')
+  .attr("orient", "auto")
   .attr('markerUnits', 'userSpaceOnUse')
   .append('path')
-  .attr('d', d3.line()([[0, 0], [0, 10], [10, 5]]))
-  .attr('stroke', 'black');
-
-
-
+  .attr('d', d3.line()([[0, 0], [0, 10], [10, 5]]));
 
 
 const plotData = [
-  {'fill':'#F62', 'boxs':2},
-  {'fill':'#F20', 'boxs':2},
-  {'fill':'#0E4', 'boxs':4},
-  {'fill':'#0A0', 'boxs':4},
-  {'fill':'#FF8', 'boxs':6},
-  {'fill':'#FD8', 'boxs':6}
-]
+  {'lineColor':'#000', 'layerColor':'#F62', 'boxs':2, 'pooling':['i']},
+  {'lineColor':'#F62', 'layerColor':'#F20', 'boxs':2, 'pooling':['i']},
+  {'lineColor':'#F20', 'layerColor':'#0E4', 'boxs':4, 'pooling':['2']},
+  {'lineColor':'#0E4', 'layerColor':'#0A0', 'boxs':4, 'pooling':['2','i']},
+  {'lineColor':'#0A0', 'layerColor':'#FF8', 'boxs':8, 'pooling':['4','2']},
+  {'lineColor':'#FF8', 'layerColor':'#FD8', 'boxs':8, 'pooling':['4','2','i']},
+  {'lineColor':'#FD8', 'boxs':0, 'pooling':['4','2','i']}
+];
+
+var denseCurveStarts = [];
+var denseCurveEnds = [];
 
 const lineGenerator = d3.line()
   .curve(d3.curveBasis);
 
-const l1 = 30;
+const l1 = 40;
 const l2 = 10;
 const d = 4;
 
 let x = 100;
-let y = 300;
+let y = 400;
 
-plotData.forEach(data => {
+plotData.forEach((data, i) => {
+
+  const yPooling = y+10*(data['pooling'].length-1);
   svg.append('path')
-    .attr('d', d3.line()([[x, y], [x+l1, y]]))
+    .attr('d', d3.line()([[x, yPooling], [x+l1, yPooling]]))
     .attr('marker-end', 'url(#arrow)')
-    .attr('stroke', 'black')
+    .attr('stroke', data['lineColor'])
     .attr('fill', 'none')
     .attr('stroke-width', '3px');
   x = x + l1 + 5;
 
-  const temp = 580;
-  svg.append('path')
-  	.attr('d', lineGenerator([[x-20, y], [x+10, 100], [temp, y]]))
-    .attr('fill', 'none')
-    .attr('stroke','#999')
-    .attr('stroke-width', '3px')
-    .attr('marker-end', 'url(#arrow)');
+  denseCurveStarts.push({'layer':i, 'point':[x-30,yPooling], 'color': data['lineColor']});
 
-
-  svg.append('rect')
-    .attr('transform', 'translate('+(x)+','+(y-10)+')')
-    .attr('width', 10)
-    .attr('height', 20)
-    .attr('stroke', 'black')
-    .attr('fill', '#48F');
+  // pooling rectangle
+  data['pooling'].forEach((type, j) => {
+    svg.append('rect')
+      .attr('transform', 'translate('+(x)+','+(y-10*(data['pooling'].length-2*j))+')')
+      .attr('width', 10)
+      .attr('height', 20)
+      .attr('stroke', 'black')
+      .attr('fill', type=='i' ? '#48F' : (type=='2' ? '#8AF' : '#EEF'));
+    denseCurveEnds.push({'layer':i, 'type':type, 'point':[x-5, y-10*(data['pooling'].length-2*j-1)]})
+  });
   x = x + 10;
 
   svg.append('path')
@@ -137,34 +134,59 @@ plotData.forEach(data => {
     .attr('stroke-width', '3px');
   x = x + l2 + 5;
 
-  y = y - 2*data['boxs'];
-  for (var i = 0; i < data['boxs']; i++) {
+  // layer rectangle
+  y = y - 2*data['boxs'] + 2*Math.floor(i/2);
+  for (var j = 0; j < data['boxs']; j++) {
     svg.append('rect')
       .attr('transform', 'translate('+(x)+','+(y-20)+')')
-      .attr('width', 40)
-      .attr('height', 40)
+      .attr('width', 40-4*Math.floor(i/2))
+      .attr('height', 40-4*Math.floor(i/2))
       .attr('stroke', 'black')
-      .attr('fill', data['fill']);
+      .attr('fill', data['layerColor']);
     x = x + 4;
     y = y + 4;
   }
-  x = x + 40 - 4;
-  y = y - 2*data['boxs'];
+  x = x + 40 - 4 - 4*Math.floor(i/2);
+  y = y - 2*data['boxs'] - 2*Math.floor(i/2);
 });
 
-// // define dense-connection curves
-// const curvePoints = [
-//   [[130, 300], [180, 100], [500, 350]],
-//   [[130, 300], [180, 120], [400, 350]],
-//   [[130, 300], [180, 140], [300, 350]]
-// ];
-//
-// curvePoints.forEach(curvePoint => {
-//   const pathData = lineGenerator(curvePoint);
-//   svg.append('path')
-//   	.attr('d', pathData)
-//     .attr('fill', 'none')
-//     .attr('stroke','#999')
-//     .attr('stroke-width', '3px')
-//     .attr('marker-end', 'url(#arrow)');
-// });
+// final global pooling
+// tbd, in the constructor array now
+
+
+var denseConnections = [];
+
+for (var i=0; i<plotData.length; i++) {
+  for (var j=i+1; j<plotData.length; j++) {
+    var c = {
+      'startLayer':i,
+      'endLayer': j,
+      'type': Math.floor(j/2)-Math.floor(i/2)==0 ? 'i' : (Math.floor(j/2)-Math.floor(i/2)==1 ? '2' : '4')
+    };
+    c['color'] = denseCurveStarts.filter(d => d['layer']==c['startLayer'])[0]['color'];
+    c['startPoint'] = denseCurveStarts.filter(d => d['layer']==c['startLayer'])[0]['point'];
+    c['midPoint'] = [c['startPoint'][0]+10*(plotData.length-i-1), y-10-(j-i)*80]
+    c['endPoint'] = denseCurveEnds.filter(d => d['layer']==c['endLayer'] && d['type']==c['type'])[0]['point'];
+    denseConnections.push(c);
+  }
+}
+
+
+
+denseConnections.forEach(c => {
+  const path = []
+  path.push(c['startPoint'])
+  path.push(c['midPoint'])
+  path.push(c['endPoint'])
+  console.log(path)
+  svg.append('path')
+    .attr('d', lineGenerator(path))
+    .attr('fill', 'none')
+    .attr('stroke',c['color'])
+    .attr('stroke-width', '3px')
+    .attr('marker-end', 'url(#arrow)');
+});
+
+
+
+console.log(denseConnections);
