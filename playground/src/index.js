@@ -84,15 +84,11 @@ const plotData = [
   {'lineColor':'#F20', 'layerColor':'#0E4', 'boxs':4, 'pooling':['2']},
   {'lineColor':'#0E4', 'layerColor':'#0A0', 'boxs':4, 'pooling':['2','i']},
   {'lineColor':'#0A0', 'layerColor':'#FF8', 'boxs':8, 'pooling':['4','2']},
-  {'lineColor':'#FF8', 'layerColor':'#FD8', 'boxs':8, 'pooling':['4','2','i']},
-  {'lineColor':'#FD8', 'boxs':0, 'pooling':['4','2','i']}
+  {'lineColor':'#FF8', 'layerColor':'#FD8', 'boxs':8, 'pooling':['4','2','i']}
 ];
 
 var denseCurveStarts = [];
 var denseCurveEnds = [];
-
-const lineGenerator = d3.line()
-  .curve(d3.curveBasis);
 
 const l1 = 40;
 const l2 = 10;
@@ -104,15 +100,28 @@ let y = 400;
 plotData.forEach((data, i) => {
 
   const yPooling = y+10*(data['pooling'].length-1);
+  denseCurveStarts.push({'layer':i, 'point':[x+10,yPooling], 'color': data['lineColor']});
+
+  // box for each block
+  if (i%2 == 0) {
+    svg.append('rect')
+      .attr('transform', 'translate('+(x+45)+','+(y-45)+')')
+      .attr('width', 220 + 4*data['boxs'])
+      .attr('height', 90)
+      .attr("rx", 10)
+      .attr("ry", 10)
+      .attr('stroke', 'black')
+      .style("stroke-dasharray", "4,4")
+      .attr('fill', '#DDD');
+  }
+
   svg.append('path')
-    .attr('d', d3.line()([[x, yPooling], [x+l1, yPooling]]))
+    .attr('d', d3.line()([[x, yPooling], [i%2==0 ? x+l1+20 : x+l1, yPooling]]))
     .attr('marker-end', 'url(#arrow)')
     .attr('stroke', data['lineColor'])
     .attr('fill', 'none')
     .attr('stroke-width', '3px');
-  x = x + l1 + 5;
-
-  denseCurveStarts.push({'layer':i, 'point':[x-30,yPooling], 'color': data['lineColor']});
+  x = x + l1 + 5 + (i%2==0 ? 20 : 0);
 
   // pooling rectangle
   data['pooling'].forEach((type, j) => {
@@ -148,6 +157,7 @@ plotData.forEach((data, i) => {
   }
   x = x + 40 - 4 - 4*Math.floor(i/2);
   y = y - 2*data['boxs'] - 2*Math.floor(i/2);
+
 });
 
 // final global pooling
@@ -158,27 +168,31 @@ var denseConnections = [];
 
 for (var i=0; i<plotData.length; i++) {
   for (var j=i+1; j<plotData.length; j++) {
+    const diff = Math.floor(j/2)-Math.floor(Math.abs(i-1)/2);
+    const type = diff == 0 ? 'i' : (diff == 1 ? '2' : '4');
+
     var c = {
       'startLayer':i,
       'endLayer': j,
-      'type': Math.floor(j/2)-Math.floor(i/2)==0 ? 'i' : (Math.floor(j/2)-Math.floor(i/2)==1 ? '2' : '4')
+      'type': type
     };
     c['color'] = denseCurveStarts.filter(d => d['layer']==c['startLayer'])[0]['color'];
     c['startPoint'] = denseCurveStarts.filter(d => d['layer']==c['startLayer'])[0]['point'];
-    c['midPoint'] = [c['startPoint'][0]+10*(plotData.length-i-1), y-10-(j-i)*80]
+    c['midPoint'] = [c['startPoint'][0]+10+40*(j-i), y-20-(j-i)*50]
     c['endPoint'] = denseCurveEnds.filter(d => d['layer']==c['endLayer'] && d['type']==c['type'])[0]['point'];
     denseConnections.push(c);
   }
 }
 
-
+// define dense connection curves
+const lineGenerator = d3.line()
+  .curve(d3.curveCatmullRom.alpha(0.6));
 
 denseConnections.forEach(c => {
   const path = []
   path.push(c['startPoint'])
   path.push(c['midPoint'])
   path.push(c['endPoint'])
-  console.log(path)
   svg.append('path')
     .attr('d', lineGenerator(path))
     .attr('fill', 'none')
@@ -187,6 +201,5 @@ denseConnections.forEach(c => {
     .attr('marker-end', 'url(#arrow)');
 });
 
-
-
+// for debug
 console.log(denseConnections);
