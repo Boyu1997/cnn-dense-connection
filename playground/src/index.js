@@ -9,10 +9,9 @@ const width = 1080;
 const height = 520;
 
 
-const svg = d3.select('svg');
-svg.style('width', width);
-svg.style('height', height);
-svg.style('background-color', 'rgba(255, 0, 0, 0.2)');
+const svg = d3.select('svg')
+  .style('width', width)
+  .style('height', height);
 
 // temp css to center
 svg.style('display', 'block');
@@ -21,7 +20,7 @@ svg.style('margin', 'auto');
 
 // input image
 svg.append('rect')
-  .attr('transform', 'translate(10, 368)')
+  .attr('transform', 'translate(10, 348)')
   .attr('width', 64)
   .attr('height', 64)
   .attr('stroke',"blue")

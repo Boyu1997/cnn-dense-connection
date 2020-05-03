@@ -66,7 +66,7 @@ export function plotHist(svg, data) {
 
   bars.append('text')
     .attr('x', function (d) {
-      return x(d.value) + 3;
+      return x(d.value) + 4;
     })
     .attr("y", function (d) {
         return y(d.category) + y.bandwidth() / 2 + 4;
