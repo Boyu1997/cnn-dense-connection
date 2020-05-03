@@ -3,16 +3,6 @@ import _ from 'lodash';
 import * as d3 from 'd3';
 import { showDenseConnections } from './helper.js';
 
-function component() {
-  const element = document.createElement('div');
-
-  element.innerHTML = _.join(['Hello', 'webpack'], ' ');
-
-  return element;
-}
-
-// document.body.appendChild(component());
-
 var data = require('./data.json');
 
 const width = 1080;
@@ -62,23 +52,7 @@ svg.append('rect')
 // context.putImageData(image, 0, 0);
 
 
-// define arrowhead marker
-const arrowPoints = [[0, 0], [0, 10], [10, 5]];
-svg.append('defs')
-  .append('marker')
-  .attr('id', 'arrow')
-  .attr('viewBox', [0, 0, 10, 10])
-  .attr('refX', 5)
-  .attr('refY', 5)
-  .attr('markerWidth', 10)
-  .attr('markerHeight', 10)
-  // .attr('orient', 'auto-start-reverse')
-  .attr("orient", "auto")
-  .attr('markerUnits', 'userSpaceOnUse')
-  .append('path')
-  .attr('d', d3.line()([[0, 0], [0, 10], [10, 5]]));
-
-
+// --- initialization ---
 const plotData = [
   {'lineColor':'#000', 'layerColor':'#F62', 'boxs':2, 'pooling':['i']},
   {'lineColor':'#F62', 'layerColor':'#F20', 'boxs':2, 'pooling':['i']},
@@ -98,6 +72,24 @@ const d = 4;
 let x = 100;
 let y = 400;
 
+// define arrowhead marker
+const arrowPoints = [[0, 0], [0, 10], [10, 5]];
+svg.append('defs')
+  .append('marker')
+  .attr('id', 'arrow')
+  .attr('viewBox', [0, 0, 10, 10])
+  .attr('refX', 5)
+  .attr('refY', 5)
+  .attr('markerWidth', 10)
+  .attr('markerHeight', 10)
+  // .attr('orient', 'auto-start-reverse')
+  .attr("orient", "auto")
+  .attr('markerUnits', 'userSpaceOnUse')
+  .append('path')
+  .attr('d', d3.line()([[0, 0], [0, 10], [10, 5]]));
+
+
+// --- main network structure ---
 plotData.forEach((data, i) => {
 
   const yPooling = y+10*(data['pooling'].length-1);
@@ -161,16 +153,44 @@ plotData.forEach((data, i) => {
 
 });
 
-// final global pooling
-// tbd, in the constructor array now
+
+// --- final global pooling ---
+svg.append('path')
+  .attr('d', d3.line()([[x, y+20], [x+l1+20, y+20]]))
+  .attr('marker-end', 'url(#arrow)')
+  .attr('stroke', '#FD8')
+  .attr('fill', 'none')
+  .attr('stroke-width', '3px');
+x = x + l1 + 5 + 20;
+
+['4','2','i'].forEach((type, i) => {
+  svg.append('rect')
+    .attr('transform', 'translate('+(x)+','+(y-10*(3-2*i))+')')
+    .attr('width', 10)
+    .attr('height', 20)
+    .attr('stroke', 'black')
+    .attr('fill', '#FFF');
+  denseCurveEnds.push({'layer':6, 'type':type, 'point':[x-5, y-10*(3-2*i-1)]})
+});
+x = x + 10;
 
 
+// --- output connection ---
+svg.append('path')
+  .attr('d', d3.line()([[x, y], [x+l2, y]]))
+  .attr('marker-end', 'url(#arrow)')
+  .attr('stroke', 'black')
+  .attr('fill', 'none')
+  .attr('stroke-width', '3px');
+x = x + l2 + 5;
+
+
+// --- calculate dense connection curves ---
 var denseConnections = [];
-
 var idxCount = 0;
 for (var i=0; i<plotData.length; i++) {
-  for (var j=i+1; j<plotData.length; j++) {
-    const diff = Math.floor(j/2)-Math.floor(Math.abs(i-1)/2);
+  for (var j=i+1; j<=plotData.length; j++) {
+    const diff = Math.floor(j/2) - Math.floor(Math.abs(i-1)/2) - (j==6 ? 1 : 0);
     const type = diff == 0 ? 'i' : (diff == 1 ? '2' : '4');
 
     var c = {
@@ -182,12 +202,14 @@ for (var i=0; i<plotData.length; i++) {
     };
     c['color'] = denseCurveStarts.filter(d => d['layer']==c['startLayer'])[0]['color'];
     c['startPoint'] = denseCurveStarts.filter(d => d['layer']==c['startLayer'])[0]['point'];
-    c['midPoint'] = [c['startPoint'][0]+10+40*(j-i), y-20-(j-i)*50]
+    c['midPoint'] = [c['startPoint'][0]+10+40*(j-i), y-10-(j-i)*50]
     c['endPoint'] = denseCurveEnds.filter(d => d['layer']==c['endLayer'] && d['type']==c['type'])[0]['point'];
     denseConnections.push(c);
   }
 }
 
+
+// show dense connection curves
 showDenseConnections(svg, denseConnections);
 
 
