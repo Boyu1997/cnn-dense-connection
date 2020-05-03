@@ -1,6 +1,7 @@
 import _ from 'lodash';
 
 import * as d3 from 'd3';
+import { showDenseConnections } from './helper.js';
 
 function component() {
   const element = document.createElement('div');
@@ -166,12 +167,15 @@ plotData.forEach((data, i) => {
 
 var denseConnections = [];
 
+var idxCount = 0;
 for (var i=0; i<plotData.length; i++) {
   for (var j=i+1; j<plotData.length; j++) {
     const diff = Math.floor(j/2)-Math.floor(Math.abs(i-1)/2);
     const type = diff == 0 ? 'i' : (diff == 1 ? '2' : '4');
 
     var c = {
+      'id': idxCount++,
+      'active': true,
       'startLayer':i,
       'endLayer': j,
       'type': type
@@ -184,22 +188,9 @@ for (var i=0; i<plotData.length; i++) {
   }
 }
 
-// define dense connection curves
-const lineGenerator = d3.line()
-  .curve(d3.curveCatmullRom.alpha(0.6));
+showDenseConnections(svg, denseConnections);
 
-denseConnections.forEach(c => {
-  const path = []
-  path.push(c['startPoint'])
-  path.push(c['midPoint'])
-  path.push(c['endPoint'])
-  svg.append('path')
-    .attr('d', lineGenerator(path))
-    .attr('fill', 'none')
-    .attr('stroke',c['color'])
-    .attr('stroke-width', '3px')
-    .attr('marker-end', 'url(#arrow)');
-});
+
 
 // for debug
 console.log(denseConnections);
