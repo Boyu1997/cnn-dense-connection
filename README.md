@@ -1,3 +1,4 @@
+
 # CNN Dense Connection
 This project is an inquiry into DenseNet and CondenseNet, specifically, the effect of having dense connections. The project develops a network class with a configurable rate of dense connection, as well as an empirical analysis on the effect of dense connection on network performance and training time.
 
@@ -7,7 +8,8 @@ This project is an inquiry into DenseNet and CondenseNet, specifically, the effe
 1. [Preliminary](#preliminary)
 2. [Usage](#usage)
 3. [Results](#results)
-4. [Acknowledgement](#acknowledgement)
+4. [Playground](#playground)
+5. [Acknowledgement](#acknowledgement)
 
 
 ## Preliminary
@@ -60,25 +62,46 @@ TBD
 ### Directory Tree
 ```bash
 ├── evaluation
-│   ├── model_eval.py
-│   └── model_select.py # plot performance figure
+│   ├── model_eval.py
+│   └── model_select.py # plot performance figure
+├── example
+│   ├── result # json files, result for models in this report
+│   └── example.ipynb # python notebook, demo training and cresult
 ├── model
-│   ├── architectures.py
-│   ├── densenet.py
-│   └── helpers.py
-├── data.py
-├── experiment.sh
+│   ├── architectures.py
+│   ├── densenet.py
+│   └── helpers.py
+├── playground
+│   └── README.md # information on interactive playground web app
+├── augment.py # data augmentation function
+├── data.py # load data to pytorch dataloader
+├── experiment.sh # bash script, train and test all models in this report
 └── main.py # entry point from network training
 ```
 
+## Playground
+
+Interactive web application to show how dense connections impact model performance using a 6-layers CondenseNet architecture. Access the application here: [playground.condensenet.boyu.io](http://playground.condensenet.boyu.io/)
+
 
 ## Results
-TBD
-
+| Method                | Depth | Params | C10 | C10+  |
+|-----------------------|-------|--------|-----|-------|
+| DenseNet              | 30    | 0.24M  | -   | 15.45 |
+| DenseNet (cbr=0.2)    | 30    | 0.26M  | -   | 14.18 |
+| DenseNet (cbr=0.4)    | 30    | 0.29M  | -   | 14.80 |
+| DenseNet (cbr=0.6)    | 30    | 0.31M  | -   | 15.65 |
+| CondenseNet           | 30    | 0.32M  | -   | 13.95 |
+| CondenseNet (cbr=0.8) | 30    | 0.29M  | -   | 13.98 |
+| CondenseNet (cbr=0.6) | 30    | 0.27M  | -   | 15.06 |
+| CondenseNet (cbr=0.4) | 30    | 0.25M  | -   | 14.78 |
+| DenseNet              | 78    | 1.09M  | -   | 8.08  |
+| DenseNet (cbr=0.2)    | 72    | 1.08M  | -   | 7.99  |
+| CondenseNet (cbr=0.8) | 66    | 1.07M  | -   | 7.74  |
+\* `C10+` represent cifar-10 dataset with data augmentation.
 
 ## Acknowledgement
 
-- [Python3](https://www.python.org)
 - [PyTorch](http://pytorch.org)
 - [CIFAR-10](https://www.cs.toronto.edu/~kriz/cifar.html)
 - [DenseNet](https://arxiv.org/abs/1608.06993)
