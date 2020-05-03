@@ -1,5 +1,38 @@
 import * as d3 from 'd3';
 
+export function plotImg(data) {
+  const imgCanvas = d3.select('#inputImg')
+    .style('top', '324px')
+    .style('left', '10px')
+    .style('width', '112px')
+    .style('height', '112px')
+    .append('canvas')
+    .attr('width', '112px')
+    .attr('height', '112px')
+
+  let context = imgCanvas.node().getContext("2d");
+
+  let dx = data[0].length;
+  let dy = data.length;
+  let image = context.createImageData(4*dx, 4*dy);
+
+  for (let x = 0, p = -1; x < dx; ++x) {
+    for (let i=0; i<4; i++) {
+      for (let y = 0; y < dy; ++y) {
+        let value = data[x][y];
+        for (let j=0; j<4; j++) {
+          image.data[++p] = value;
+          image.data[++p] = value;
+          image.data[++p] = value;
+          image.data[++p] = 180;
+        }
+      }
+    }
+  }
+
+  context.putImageData(image, 0, 0);
+}
+
 export function showDenseConnections(svg, denseConnections) {
   // define dense connection curves
   const lineGenerator = d3.line()
@@ -32,8 +65,8 @@ export function showDenseConnections(svg, denseConnections) {
 
 
 export function plotHist(svg, data) {
-  const width = 160;
-  const height = 380;
+  const width = 280;
+  const height = 360;
 
   data = data.sort(function (a, b) {
     return d3.descending(a.category, b.category);
@@ -66,7 +99,7 @@ export function plotHist(svg, data) {
 
   bars.append('text')
     .attr('x', function (d) {
-      return x(d.value) + 4;
+      return x(d.value) + 6;
     })
     .attr("y", function (d) {
         return y(d.category) + y.bandwidth() / 2 + 4;
@@ -80,6 +113,6 @@ export function plotHist(svg, data) {
   svg.append('g')
     .call(d3.axisLeft(y)
       .tickSize(0))
-      .style('font-size', '14px')
-      .style('font-weight', '600');
+      .style('font-size', '18px')
+      .style('font-weight', '800');
 }
