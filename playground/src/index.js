@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 import * as d3 from 'd3';
-import { showDenseConnections } from './helper.js';
+import { showDenseConnections, plotHist } from './helper.js';
 
 var data = require('./data.json');
 
@@ -21,9 +21,9 @@ svg.style('margin', 'auto');
 
 // input image
 svg.append('rect')
-  .attr('transform', 'translate(20, 360)')
-  .attr('width', 80)
-  .attr('height', 80)
+  .attr('transform', 'translate(10, 368)')
+  .attr('width', 64)
+  .attr('height', 64)
   .attr('stroke',"blue")
   .attr('fill', '#FFF')
 
@@ -65,12 +65,12 @@ const plotData = [
 var denseCurveStarts = [];
 var denseCurveEnds = [];
 
-const l1 = 40;
+const l1 = 30;
 const l2 = 10;
 const d = 4;
 
-let x = 100;
-let y = 400;
+let x = 74;
+let y = 380;
 
 // define arrowhead marker
 const arrowPoints = [[0, 0], [0, 10], [10, 5]];
@@ -98,8 +98,8 @@ plotData.forEach((data, i) => {
   // box for each block
   if (i%2 == 0) {
     svg.append('rect')
-      .attr('transform', 'translate('+(x+45)+','+(y-45)+')')
-      .attr('width', 220 + 4*data['boxs'])
+      .attr('transform', 'translate('+(x+30)+','+(y-45)+')')
+      .attr('width', 195 + 4*data['boxs'])
       .attr('height', 90)
       .attr("rx", 10)
       .attr("ry", 10)
@@ -109,24 +109,24 @@ plotData.forEach((data, i) => {
   }
 
   svg.append('path')
-    .attr('d', d3.line()([[x, yPooling], [i%2==0 ? x+l1+20 : x+l1, yPooling]]))
+    .attr('d', d3.line()([[x, yPooling], [i%2==0 ? x+l1+10 : x+l1, yPooling]]))
     .attr('marker-end', 'url(#arrow)')
     .attr('stroke', data['lineColor'])
     .attr('fill', 'none')
     .attr('stroke-width', '3px');
-  x = x + l1 + 5 + (i%2==0 ? 20 : 0);
+  x = x + l1 + 5 + (i%2==0 ? 10 : 0);
 
   // pooling rectangle
   data['pooling'].forEach((type, j) => {
     svg.append('rect')
       .attr('transform', 'translate('+(x)+','+(y-10*(data['pooling'].length-2*j))+')')
-      .attr('width', 10)
+      .attr('width', 8)
       .attr('height', 20)
       .attr('stroke', 'black')
-      .attr('fill', type=='i' ? '#48F' : (type=='2' ? '#8AF' : '#EEF'));
+      .attr('fill', type=='i' ? '#48F' : (type=='2' ? '#8AF' : '#BBF'));
     denseCurveEnds.push({'layer':i, 'type':type, 'point':[x-5, y-10*(data['pooling'].length-2*j-1)]})
   });
-  x = x + 10;
+  x = x + 8;
 
   svg.append('path')
     .attr('d', d3.line()([[x, y], [x+l2, y]]))
@@ -156,33 +156,33 @@ plotData.forEach((data, i) => {
 
 // --- final global pooling ---
 svg.append('path')
-  .attr('d', d3.line()([[x, y+20], [x+l1+20, y+20]]))
+  .attr('d', d3.line()([[x, y+20], [x+l1, y+20]]))
   .attr('marker-end', 'url(#arrow)')
   .attr('stroke', '#FD8')
   .attr('fill', 'none')
   .attr('stroke-width', '3px');
-x = x + l1 + 5 + 20;
+x = x + l1 + 5;
 
 ['4','2','i'].forEach((type, i) => {
   svg.append('rect')
     .attr('transform', 'translate('+(x)+','+(y-10*(3-2*i))+')')
-    .attr('width', 10)
+    .attr('width', 8)
     .attr('height', 20)
     .attr('stroke', 'black')
     .attr('fill', '#FFF');
   denseCurveEnds.push({'layer':6, 'type':type, 'point':[x-5, y-10*(3-2*i-1)]})
 });
-x = x + 10;
+x = x + 8;
 
 
 // --- output connection ---
 svg.append('path')
-  .attr('d', d3.line()([[x, y], [x+l2, y]]))
+  .attr('d', d3.line()([[x, y], [x+20, y]]))
   .attr('marker-end', 'url(#arrow)')
   .attr('stroke', 'black')
   .attr('fill', 'none')
   .attr('stroke-width', '3px');
-x = x + l2 + 5;
+x = x + l2 + 20 + 5;
 
 
 // --- calculate dense connection curves ---
@@ -202,7 +202,7 @@ for (var i=0; i<plotData.length; i++) {
     };
     c['color'] = denseCurveStarts.filter(d => d['layer']==c['startLayer'])[0]['color'];
     c['startPoint'] = denseCurveStarts.filter(d => d['layer']==c['startLayer'])[0]['point'];
-    c['midPoint'] = [c['startPoint'][0]+10+40*(j-i), y-10-(j-i)*50]
+    c['midPoint'] = [c['startPoint'][0]+40*(j-i), y-10-(j-i)*50]
     c['endPoint'] = denseCurveEnds.filter(d => d['layer']==c['endLayer'] && d['type']==c['type'])[0]['point'];
     denseConnections.push(c);
   }
@@ -216,3 +216,27 @@ showDenseConnections(svg, denseConnections);
 
 // for debug
 console.log(denseConnections);
+
+
+
+
+
+
+var histData = [
+  {'category': 'airplane', 'value': 0.032},
+  {'category': 'automobile', 'value': 0.009},
+  {'category': 'bird', 'value': 0.83},
+  {'category': 'cat', 'value': 0.12},
+  {'category': 'deer', 'value': 0.3319},
+  {'category': 'dog', 'value': 0.0003},
+  {'category': 'frog', 'value': 0.0021},
+  {'category': 'horse', 'value': 0.832},
+  {'category': 'ship', 'value': 0.2},
+  {'category': 'truck', 'value': 0.031}
+];
+
+
+const hist = svg.append('g')
+  .attr('transform', 'translate(870,50)');
+
+plotHist(hist, histData);
