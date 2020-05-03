@@ -79,12 +79,14 @@ TBD
 └── main.py # entry point from network training
 ```
 
+
 ## Playground
 
 Interactive web application to show how dense connections impact model performance using a 6-layers CondenseNet architecture. Access the application here: [playground.condensenet.boyu.io](http://playground.condensenet.boyu.io/)
 
 
 ## Results
+
 | Method                | Depth | Params | C10 | C10+  |
 |-----------------------|-------|--------|-----|-------|
 | DenseNet              | 30    | 0.24M  | -   | 15.45 |
@@ -98,7 +100,9 @@ Interactive web application to show how dense connections impact model performan
 | DenseNet              | 78    | 1.09M  | -   | 8.08  |
 | DenseNet (cbr=0.2)    | 72    | 1.08M  | -   | 7.99  |
 | CondenseNet (cbr=0.8) | 66    | 1.07M  | -   | 7.74  |
+
 \* `C10+` represent cifar-10 dataset with data augmentation.
+
 
 ## Acknowledgement
 
