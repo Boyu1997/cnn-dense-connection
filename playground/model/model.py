@@ -23,7 +23,7 @@ class Model(nn.Module):
         self.growth = 4 # initial feature size for the first block
 
         '''initial convolution layer'''
-        self.features.add_module('init_conv', nn.Conv2d(1, self.growth,
+        self.features.add_module('init_conv', nn.Conv2d(3, self.growth,
                                                         kernel_size=3,
                                                         stride=1,
                                                         padding=1,
@@ -116,10 +116,8 @@ class Model(nn.Module):
         layer = Transition(2*self.growth)
         self.features.add_module('transition_2', layer)
 
-        # print (self.features)
-
         '''linear layer'''
-        self.classifier = nn.Linear(7*7*2*self.growth, self.num_classes)
+        self.classifier = nn.Linear(8*8*2*self.growth, self.num_classes)
 
         '''initialize network'''
         for m in self.modules():

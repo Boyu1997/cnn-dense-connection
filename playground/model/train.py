@@ -57,7 +57,7 @@ def validate(model, device, validateloader, criterion):
     return validation_loss.mean, validation_accuracy.mean
 
 
-def train_model(model, id, trainloader, validateloader, device, lr):
+def train_model(model, id, trainloader, validateloader, device, ep, lr):
     criterion = nn.CrossEntropyLoss().to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     model.to(device)
@@ -71,7 +71,7 @@ def train_model(model, id, trainloader, validateloader, device, lr):
     }
     clock = time.time()
 
-    for e in range(3):
+    for e in range(ep):
 
         # train and validate
         training_loss, training_accuracy = train(model, device, trainloader, optimizer, criterion)
