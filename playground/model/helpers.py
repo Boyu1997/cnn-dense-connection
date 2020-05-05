@@ -104,3 +104,16 @@ class _FinalConv(nn.Module):
         '''convolution on selected x'''
         x = torch.index_select(x, 1, torch.tensor(self.idx).to(self.device))
         return self.final_conv(x)
+
+def reverse_normalize_helper(channel, mean, std):
+    return [[int(256*(x*std+mean)) for x in row] for row in channel]
+
+def reverse_normalize(images):
+    reversed = []
+    for image in images:
+        reversed.append([
+            reverse_normalize_helper(image[0],0.4914,0.2471),
+            reverse_normalize_helper(image[1],0.4824,0.2435),
+            reverse_normalize_helper(image[2],0.4467,0.2616)
+        ])
+    return reversed

@@ -2,7 +2,7 @@ import torch
 import json
 
 from model import Model
-from helpers import id_to_connections
+from helpers import reverse_normalize, id_to_connections
 
 
 def get_playground_data(testloader, device):
@@ -13,7 +13,7 @@ def get_playground_data(testloader, device):
 
     # initialization
     data = {
-        'inputs': inputs.tolist(),
+        'inputs': reverse_normalize(inputs.tolist()),
         'labels': labels.tolist(),
         'models': []
     }
