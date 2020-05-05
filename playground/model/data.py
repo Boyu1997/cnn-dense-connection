@@ -7,7 +7,7 @@ def load_data(b_size):
     # define data transform (no augmentation, same for train and test)
     transform = transforms.Compose([
         transforms.ToTensor(),
-        transforms.Normalize((0.1307,), (0.3081,))
+        transforms.Normalize((0.4914, 0.4824, 0.4467), (0.2471, 0.2435, 0.2616))
     ])
 
     # load train set and make train and validation loader
