@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 import * as d3 from 'd3';
-import { showDenseConnections, plotImg, plotHist } from './helper.js';
+import { calculateModelId, plotImg, plotHist, updateHist } from './helper.js';
 
 const data = require('./data.json');
 var dataIdx = 1;
@@ -185,9 +185,36 @@ for (var i=0; i<plotData.length; i++) {
   }
 }
 
+// define dense connection curves
+const lineGenerator = d3.line()
+  .curve(d3.curveCatmullRom.alpha(0.3));
 
-// show dense connection curves
-showDenseConnections(svg, denseConnections);
+denseConnections.forEach(c => {
+  const path = []
+  path.push(c['startPoint'])
+  path.push(c['midPoint'])
+  path.push(c['endPoint'])
+  svg.append('path')
+    .attr('d', lineGenerator(path))
+    .attr('fill', 'none')
+    .attr('stroke', c['active'] ? c['color'] : '#CCC')
+    .attr('stroke-width', '3px')
+    .attr('marker-end', 'url(#arrow)')
+    .on('mouseover', function() {
+      d3.select(this).attr("stroke-width", '6px');
+    })
+    .on('mouseout', function() {
+      d3.select(this).attr("stroke-width", '3px');
+    })
+    .on('click', function(d) {
+      const color = c['active'] ? '#CCC' : c['color'];
+      c['active'] = !c['active'];
+      d3.select(this).attr("stroke", color);
+
+      modelId = calculateModelId(denseConnections);
+      updateHist(hist, data, dataIdx, modelId);
+    });
+});
 
 
 const hist = svg.append('g')

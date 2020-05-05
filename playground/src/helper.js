@@ -1,5 +1,8 @@
 import * as d3 from 'd3';
 
+const histWidth = 230;
+const histHeight = 360;
+
 export function plotImg(data, dataIdx) {
   const imgCanvas = d3.select('#inputImg')
     .style('top', '316px')
@@ -11,7 +14,6 @@ export function plotImg(data, dataIdx) {
     .attr('height', '128px')
 
   let context = imgCanvas.node().getContext("2d");
-  console.log(data['inputs'][dataIdx])
 
   let size = 32;
   let image = context.createImageData(4*size, 4*size);
@@ -32,42 +34,19 @@ export function plotImg(data, dataIdx) {
   context.putImageData(image, 0, 0);
 }
 
-export function showDenseConnections(svg, denseConnections) {
-  // define dense connection curves
-  const lineGenerator = d3.line()
-    .curve(d3.curveCatmullRom.alpha(0.3));
-
-  denseConnections.forEach(c => {
-    const path = []
-    path.push(c['startPoint'])
-    path.push(c['midPoint'])
-    path.push(c['endPoint'])
-    svg.append('path')
-      .attr('d', lineGenerator(path))
-      .attr('fill', 'none')
-      .attr('stroke', c['active'] ? c['color'] : '#CCC')
-      .attr('stroke-width', '3px')
-      .attr('marker-end', 'url(#arrow)')
-      .on('mouseover', function() {
-        d3.select(this).attr("stroke-width", '6px');
-      })
-      .on('mouseout', function() {
-        d3.select(this).attr("stroke-width", '3px');
-      })
-      .on('click', function(d) {
-        const color = c['active'] ? '#CCC' : c['color'];
-        c['active'] = !c['active'];
-        d3.select(this).attr("stroke", color);
-      });
+export function calculateModelId(connections) {
+  var modelId = 0;
+  connections.forEach(c => {
+    if (c['active']) {
+      modelId += Math.pow(2, c['id']);
+    }
   });
+  return modelId;
 }
 
-
-export function plotHist(svg, data, dataIdx, modelId) {
-  const width = 230;
-  const height = 360;
+function getHistData(data, dataIdx, modelId) {
   const outputs = data['models'].find(model => model['id'] == modelId)['outputs'][dataIdx];
-  var histData = [
+  const histData = [
     {'category': 'truck', 'value': outputs[9]},
     {'category': 'ship', 'value': outputs[8]},
     {'category': 'horse', 'value': outputs[7]},
@@ -78,14 +57,20 @@ export function plotHist(svg, data, dataIdx, modelId) {
     {'category': 'bird', 'value': outputs[2]},
     {'category': 'automobile', 'value': outputs[1]},
     {'category': 'airplane', 'value': outputs[0]}
-  ]
+  ];
+  return histData;
+}
+
+
+export function plotHist(svg, data, dataIdx, modelId) {
+  const histData = getHistData(data, dataIdx, modelId);
 
   var x = d3.scaleLinear()
-    .range([0, width])
+    .range([0, histWidth])
     .domain([0, 1]);
 
   var y = d3.scaleBand()
-    .range([height, 0])
+    .range([histHeight, 0])
     .padding(0.1)
     .domain(histData.map(function (d) {
       return d.category;
@@ -94,16 +79,18 @@ export function plotHist(svg, data, dataIdx, modelId) {
   var bars = svg.selectAll('.bar')
     .data(histData)
     .enter()
-    .append("g")
+    .append('g');
 
   bars.append('rect')
+    .attr('class', 'bar')
     .attr('x', 0)
     .attr('y', function(d) { return y(d.category); })
-    .attr('width', function(d) {return x(d.value); } )
+    .attr('width', function(d) {return x(d.value); })
     .attr('height', y.bandwidth())
-    .attr('fill', '#33F')
+    .attr('fill', '#33F');
 
   bars.append('text')
+    .attr('class', 'text')
     .attr('x', function (d) {
       return x(d.value) + 6;
     })
@@ -121,4 +108,38 @@ export function plotHist(svg, data, dataIdx, modelId) {
       .tickSize(0))
       .style('font-size', '18px')
       .style('font-weight', '800');
+}
+
+export function updateHist(svg, data, dataIdx, modelId) {
+  const histData = getHistData(data, dataIdx, modelId);
+
+  var x = d3.scaleLinear()
+    .range([0, histWidth])
+    .domain([0, 1]);
+
+  var y = d3.scaleBand()
+    .range([histHeight, 0])
+    .padding(0.1)
+    .domain(histData.map(function (d) {
+      return d.category;
+    }));
+
+  svg.selectAll(".bar")
+    .data(histData)
+    .transition().duration(1000)
+    .attr('y', function(d) { return y(d.category); })
+    .attr('width', function(d) {return x(d.value); });
+
+  svg.selectAll(".text")
+    .data(histData)
+    .transition().duration(1000)
+    .attr('x', function (d) {
+      return x(d.value) + 6;
+    })
+    .attr("y", function (d) {
+        return y(d.category) + y.bandwidth() / 2 + 4;
+    })
+    .text(function (d) {
+        return (d.value*100).toFixed(1)+'%';
+    });
 }
