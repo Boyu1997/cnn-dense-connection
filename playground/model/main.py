@@ -22,10 +22,10 @@ def main():
     _, _, testloader = load_data(b_size=4)
 
     # model training
-    # for i in range(1024):
-    #     connections = id_to_connections(i)
-    #     model = Model(connections, device)
-    #     train_model(model, i, trainloader, validateloader, device, ep=5, lr=1e-2)
+    for i in range(1024):
+        connections = id_to_connections(i)
+        model = Model(connections, device)
+        train_model(model, i, trainloader, validateloader, device, ep=5, lr=1e-2)
 
     # playground data
     get_playground_data(testloader, device)
