@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import math
 from copy import deepcopy
+from collections import OrderedDict
 
 from helpers import _DenseLayer, _FinalConv, Transition
 
@@ -117,7 +118,10 @@ class Model(nn.Module):
         self.features.add_module('transition_2', layer)
 
         '''linear layer'''
-        self.classifier = nn.Linear(8*8*2*self.growth, self.num_classes)
+        self.classifier = nn.Sequential(OrderedDict([
+            ('linear', nn.Linear(8*8*2*self.growth, self.num_classes)),
+            ('output', nn.Softmax(dim=1))
+        ]))
 
         '''initialize network'''
         for m in self.modules():
