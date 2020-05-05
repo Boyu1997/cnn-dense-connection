@@ -3,7 +3,9 @@ import _ from 'lodash';
 import * as d3 from 'd3';
 import { showDenseConnections, plotImg, plotHist } from './helper.js';
 
-var data = require('./data.json');
+const data = require('./data.json');
+var dataIdx = 1;
+var modelId = 0;
 
 const width = 1080;
 const height = 520;
@@ -20,13 +22,13 @@ svg.style('margin', 'auto');
 
 // input image
 svg.append('rect')
-  .attr('transform', 'translate(10, 324)')
-  .attr('width', 112)
-  .attr('height', 112)
+  .attr('transform', 'translate(10, 316)')
+  .attr('width', 128)
+  .attr('height', 128)
   .attr('stroke', 'black')
   .attr('fill', '#FFF')
 
-plotImg(data);
+plotImg(data, dataIdx);
 
 
 // --- initialization ---
@@ -44,7 +46,7 @@ const l1 = 40;
 const l2 = 10;
 const d = 4;
 
-let x = 122;
+let x = 138;
 let y = 380;
 
 // define arrowhead marker
@@ -170,7 +172,7 @@ for (var i=0; i<plotData.length; i++) {
 
     var c = {
       'id': idxCount++,
-      'active': true,
+      'active': false,
       'startLayer':i,
       'endLayer': j,
       'type': type
@@ -188,30 +190,12 @@ for (var i=0; i<plotData.length; i++) {
 showDenseConnections(svg, denseConnections);
 
 
+const hist = svg.append('g')
+  .attr('transform', 'translate(800,70)');
+
+plotHist(hist, data, dataIdx, modelId);
+
+
 
 // for debug
 console.log(denseConnections);
-
-
-
-
-
-
-var histData = [
-  {'category': '0', 'value': 0.032},
-  {'category': '1', 'value': 0.009},
-  {'category': '2', 'value': 0.83},
-  {'category': '3', 'value': 0.12},
-  {'category': '4', 'value': 0.3319},
-  {'category': '5', 'value': 0.0003},
-  {'category': '6', 'value': 0.0021},
-  {'category': '7', 'value': 0.832},
-  {'category': '8', 'value': 0.2},
-  {'category': '9', 'value': 0.031}
-];
-
-
-const hist = svg.append('g')
-  .attr('transform', 'translate(750,70)');
-
-plotHist(hist, histData);

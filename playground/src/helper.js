@@ -1,30 +1,29 @@
 import * as d3 from 'd3';
 
-export function plotImg(data) {
+export function plotImg(data, dataIdx) {
   const imgCanvas = d3.select('#inputImg')
-    .style('top', '324px')
+    .style('top', '316px')
     .style('left', '10px')
-    .style('width', '112px')
-    .style('height', '112px')
+    .style('width', '128px')
+    .style('height', '128px')
     .append('canvas')
-    .attr('width', '112px')
-    .attr('height', '112px')
+    .attr('width', '128px')
+    .attr('height', '128px')
 
   let context = imgCanvas.node().getContext("2d");
+  console.log(data['inputs'][dataIdx])
 
-  let dx = data[0].length;
-  let dy = data.length;
-  let image = context.createImageData(4*dx, 4*dy);
+  let size = 32;
+  let image = context.createImageData(4*size, 4*size);
 
-  for (let x = 0, p = -1; x < dx; ++x) {
+  for (let x = 0, p = -1; x < size; ++x) {
     for (let i=0; i<4; i++) {
-      for (let y = 0; y < dy; ++y) {
-        let value = data[x][y];
+      for (let y = 0; y < size; ++y) {
         for (let j=0; j<4; j++) {
-          image.data[++p] = value;
-          image.data[++p] = value;
-          image.data[++p] = value;
-          image.data[++p] = 180;
+          image.data[++p] = data['inputs'][dataIdx][0][x][y];
+          image.data[++p] = data['inputs'][dataIdx][1][x][y];
+          image.data[++p] = data['inputs'][dataIdx][2][x][y];
+          image.data[++p] = 255;
         }
       }
     }
@@ -46,7 +45,7 @@ export function showDenseConnections(svg, denseConnections) {
     svg.append('path')
       .attr('d', lineGenerator(path))
       .attr('fill', 'none')
-      .attr('stroke',c['color'])
+      .attr('stroke', c['active'] ? c['color'] : '#CCC')
       .attr('stroke-width', '3px')
       .attr('marker-end', 'url(#arrow)')
       .on('mouseover', function() {
@@ -64,29 +63,36 @@ export function showDenseConnections(svg, denseConnections) {
 }
 
 
-export function plotHist(svg, data) {
-  const width = 280;
+export function plotHist(svg, data, dataIdx, modelId) {
+  const width = 230;
   const height = 360;
-
-  data = data.sort(function (a, b) {
-    return d3.descending(a.category, b.category);
-  })
+  const outputs = data['models'].find(model => model['id'] == modelId)['outputs'][dataIdx];
+  var histData = [
+    {'category': 'truck', 'value': outputs[9]},
+    {'category': 'ship', 'value': outputs[8]},
+    {'category': 'horse', 'value': outputs[7]},
+    {'category': 'frog', 'value': outputs[6]},
+    {'category': 'dog', 'value': outputs[5]},
+    {'category': 'deer', 'value': outputs[4]},
+    {'category': 'cat', 'value': outputs[3]},
+    {'category': 'bird', 'value': outputs[2]},
+    {'category': 'automobile', 'value': outputs[1]},
+    {'category': 'airplane', 'value': outputs[0]}
+  ]
 
   var x = d3.scaleLinear()
     .range([0, width])
-    .domain([0, d3.max(data, function (d) {
-      return d.value;
-    })]);
+    .domain([0, 1]);
 
   var y = d3.scaleBand()
     .range([height, 0])
     .padding(0.1)
-    .domain(data.map(function (d) {
+    .domain(histData.map(function (d) {
       return d.category;
     }));
 
   var bars = svg.selectAll('.bar')
-    .data(data)
+    .data(histData)
     .enter()
     .append("g")
 
