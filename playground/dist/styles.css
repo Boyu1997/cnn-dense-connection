@@ -1,6 +1,63 @@
+body {
+  margin: 0px;
+  background-color: #f7f7f7;
+}
+
+.github-link {
+  width: 60px;
+  height: 60px;
+  position: absolute;
+  display: block;
+  top: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+.github-link .bg {
+  fill: #fff;
+  fill-opacity: 0.2;
+}
+
+.github-link:hover .bg {
+  fill-opacity: 0.3;
+}
+
+.github-link .icon {
+  fill: #fff;
+  fill-opacity: 0.6;
+}
+
+.github-link:hover .icon {
+  fill-opacity: 0.7;
+}
+
+header {
+  border-bottom: solid 1px rgba(0,0,0,0.4);
+  background-color: #183D4E;
+  color: white;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  position: relative;
+}
+
+header h1 {
+  margin-top: 30px;
+  margin-bottom: 30px;
+  text-align: center;
+  font-size: 34px;
+  font-weight: 300;
+  font-family: "Roboto", "Helvetica", "Arial";
+  line-height: 1.45em;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+header h1 b {
+  font-weight: 400;
+  color: rgba(255, 255, 255, 1);
+}
+
 #main {
-  margin-left: auto;
-  margin-right: auto;
+  margin: 60px auto;
   display: block;
   width: 1080px;
 }
@@ -18,4 +75,37 @@
   width: 160px;
   height: 50px;
   border: solid;
+}
+
+#more {
+  position: absolute;
+  left: 50%;
+}
+
+#more div {
+  background-color: white;
+  position: absolute;
+  margin: auto;
+  height: 56px;
+  width: 56px;
+  border-radius: 50%;
+  left: -28px;
+  top: -28px;
+  padding: 0px;
+  border: none;
+  box-shadow: 0 1px 1.5px 0 rgba(0,0,0,.12), 0 1px 1px 0 rgba(0,0,0,.24);
+}
+
+#more div svg {
+  position: absolute;
+  top: 20px;
+  left: 18px;
+}
+
+#body {
+  background-color: white;
+  padding: 80px 0;
+  box-shadow: 0 0px 4px rgba(0, 0, 0, 0.1);
+
+  height: 1000px;
 }

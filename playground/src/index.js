@@ -12,7 +12,7 @@ const width = 1080;
 const height = 520;
 
 
-const svg = d3.select('svg')
+const svg = d3.select('#d3')
   .style('width', width)
   .style('height', height);
 
@@ -257,4 +257,12 @@ document.getElementById('configCondensenetButton').onclick = function(){
   updateDenseConnectionCurves(svg, denseConnections);
   modelId = calculateModelId(denseConnections);
   updateHist(hist, data, dataIdx, modelId);
+};
+
+document.getElementById('more').onclick = function(){
+  window.scrollTo({
+    top: 600,
+    left: 0,
+    behavior: 'smooth'
+  });
 };
