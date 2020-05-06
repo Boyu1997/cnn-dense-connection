@@ -3,7 +3,7 @@ import argparse
 import numpy as np
 import torch
 
-import torch.nn as nn   # nn for parallel
+import torch.nn as nn
 
 # load model
 from model import Model
@@ -19,7 +19,7 @@ def main():
 
     # get data loaders
     trainloader, validateloader, _ = load_data(b_size=2048)
-    _, _, testloader = load_data(b_size=4)
+    _, _, testloader = load_data(b_size=64)
 
     # model training
     for i in range(1024):

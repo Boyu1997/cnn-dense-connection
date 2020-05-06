@@ -18,8 +18,7 @@ def get_playground_data(testloader, device):
         'models': []
     }
 
-    # for i in range(1024):
-    for i in [0,1,2,3,4,1023]:
+    for i in range(1024):
         print (i)
         # prepare model
         connections = id_to_connections(i)
