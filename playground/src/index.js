@@ -203,6 +203,7 @@ svg.selectAll()
      return lineGenerator(d.path);
    })
    .attr('fill', 'none')
+   .attr('cursor', 'pointer')
    .attr('stroke', function(d) {
      return d.active ? d.color : '#CCC';
    })
@@ -267,7 +268,7 @@ changeImageButton.append('text')
 
 // change model buttons
 const configSequentialButton = svg.append('g')
-  .attr('transform', 'translate(200,400)')
+  .attr('transform', 'translate(205,400)')
   .attr('cursor', 'pointer')
   .on('click', function() {
     denseConnections.forEach(c => c['active'] = false);
@@ -289,7 +290,7 @@ configSequentialButton.append('text')
   .text('Sequential');
 
 const configDensenetButton = svg.append('g')
-  .attr('transform', 'translate(350,400)')
+  .attr('transform', 'translate(355,400)')
   .attr('cursor', 'pointer')
   .on('click', function() {
     denseConnections.forEach(c => {
@@ -313,7 +314,7 @@ configDensenetButton.append('text')
   .text('Densenet');
 
 const configCondensenetButton = svg.append('g')
-  .attr('transform', 'translate(500,400)')
+  .attr('transform', 'translate(505,400)')
   .attr('cursor', 'pointer')
   .on('click', function() {
     denseConnections.forEach(c => c['active'] = true);
