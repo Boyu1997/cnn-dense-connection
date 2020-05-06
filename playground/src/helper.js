@@ -3,6 +3,11 @@ import * as d3 from 'd3';
 const histWidth = 230;
 const histHeight = 360;
 
+export function getRandomId(count) {
+  return Math.floor(Math.random() * count);
+}
+
+
 export function plotImg(data, dataIdx) {
   const imgCanvas = d3.select('#inputImg')
     .style('top', '316px')
@@ -10,6 +15,7 @@ export function plotImg(data, dataIdx) {
     .style('width', '128px')
     .style('height', '128px')
     .append('canvas')
+    .attr('id', 'inputImageCanvas')
     .attr('width', '128px')
     .attr('height', '128px')
 
@@ -30,9 +36,33 @@ export function plotImg(data, dataIdx) {
       }
     }
   }
-
   context.putImageData(image, 0, 0);
 }
+
+
+export function updateImg(data, dataIdx) {
+  const imgCanvas = d3.select('#inputImageCanvas');
+  let context = imgCanvas.node().getContext("2d");
+
+  let size = 32;
+  let image = context.createImageData(4*size, 4*size);
+
+  for (let x = 0, p = -1; x < size; ++x) {
+    for (let i=0; i<4; i++) {
+      for (let y = 0; y < size; ++y) {
+        for (let j=0; j<4; j++) {
+          image.data[++p] = data['inputs'][dataIdx][0][x][y];
+          image.data[++p] = data['inputs'][dataIdx][1][x][y];
+          image.data[++p] = data['inputs'][dataIdx][2][x][y];
+          image.data[++p] = 255;
+        }
+      }
+    }
+  }
+  context.putImageData(image, 0, 0);
+
+}
+
 
 export function calculateModelId(connections) {
   var modelId = 0;
@@ -43,6 +73,7 @@ export function calculateModelId(connections) {
   });
   return modelId;
 }
+
 
 function getHistData(data, dataIdx, modelId) {
   const outputs = data['models'].find(model => model['id'] == modelId)['outputs'][dataIdx];
@@ -109,6 +140,7 @@ export function plotHist(svg, data, dataIdx, modelId) {
       .style('font-size', '18px')
       .style('font-weight', '800');
 }
+
 
 export function updateHist(svg, data, dataIdx, modelId) {
   const histData = getHistData(data, dataIdx, modelId);

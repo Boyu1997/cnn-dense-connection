@@ -1,10 +1,10 @@
 import _ from 'lodash';
 
 import * as d3 from 'd3';
-import { calculateModelId, plotImg, plotHist, updateHist } from './helper.js';
+import { getRandomId, calculateModelId, plotImg, updateImg, plotHist, updateHist } from './helper.js';
 
 const data = require('./data.json');
-var dataIdx = 1;
+var dataIdx = getRandomId(data['inputs'].length);
 var modelId = 0;
 
 const width = 1080;
@@ -222,7 +222,8 @@ const hist = svg.append('g')
 
 plotHist(hist, data, dataIdx, modelId);
 
-
-
-// for debug
-console.log(denseConnections);
+document.getElementById('changeImageButton').onclick = function(){
+  dataIdx = getRandomId(data['inputs'].length);
+  updateImg(data, dataIdx);
+  updateHist(hist, data, dataIdx, modelId);
+}
