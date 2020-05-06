@@ -175,3 +175,13 @@ export function updateHist(svg, data, dataIdx, modelId) {
         return (d.value*100).toFixed(1)+'%';
     });
 }
+
+
+export function updateDenseConnectionCurves(svg, denseConnections){
+  svg.selectAll(".denseConnection")
+    .data(denseConnections)
+    .transition().duration(10)
+    .attr('stroke', function(d) {
+      return d.active ? d.color : '#CCC';
+    })
+}

@@ -1,7 +1,8 @@
 import _ from 'lodash';
 
 import * as d3 from 'd3';
-import { getRandomId, calculateModelId, plotImg, updateImg, plotHist, updateHist } from './helper.js';
+import { getRandomId, calculateModelId, updateDenseConnectionCurves,
+  plotImg, updateImg, plotHist, updateHist } from './helper.js';
 
 const data = require('./data.json');
 var dataIdx = getRandomId(data['inputs'].length);
@@ -178,9 +179,10 @@ for (var i=0; i<plotData.length; i++) {
       'type': type
     };
     c['color'] = denseCurveStarts.filter(d => d['layer']==c['startLayer'])[0]['color'];
-    c['startPoint'] = denseCurveStarts.filter(d => d['layer']==c['startLayer'])[0]['point'];
-    c['midPoint'] = [c['startPoint'][0]+40*(j-i), y-10-(j-i)*50]
-    c['endPoint'] = denseCurveEnds.filter(d => d['layer']==c['endLayer'] && d['type']==c['type'])[0]['point'];
+    const startPoint = denseCurveStarts.filter(d => d['layer']==c['startLayer'])[0]['point'];
+    const midPoint = [startPoint[0]+40*(j-i), y-10-(j-i)*50]
+    const endPoint = denseCurveEnds.filter(d => d['layer']==c['endLayer'] && d['type']==c['type'])[0]['point'];
+    c['path'] = [startPoint, midPoint, endPoint];
     denseConnections.push(c);
   }
 }
@@ -189,32 +191,33 @@ for (var i=0; i<plotData.length; i++) {
 const lineGenerator = d3.line()
   .curve(d3.curveCatmullRom.alpha(0.3));
 
-denseConnections.forEach(c => {
-  const path = []
-  path.push(c['startPoint'])
-  path.push(c['midPoint'])
-  path.push(c['endPoint'])
-  svg.append('path')
-    .attr('d', lineGenerator(path))
-    .attr('fill', 'none')
-    .attr('stroke', c['active'] ? c['color'] : '#CCC')
-    .attr('stroke-width', '3px')
-    .attr('marker-end', 'url(#arrow)')
-    .on('mouseover', function() {
-      d3.select(this).attr("stroke-width", '6px');
-    })
-    .on('mouseout', function() {
-      d3.select(this).attr("stroke-width", '3px');
-    })
-    .on('click', function(d) {
-      const color = c['active'] ? '#CCC' : c['color'];
-      c['active'] = !c['active'];
-      d3.select(this).attr("stroke", color);
-
-      modelId = calculateModelId(denseConnections);
-      updateHist(hist, data, dataIdx, modelId);
-    });
-});
+svg.selectAll()
+   .data(denseConnections)
+   .enter()
+   .append('g')
+   .append('path')
+   .attr('class', 'denseConnection')
+   .attr('d', function(d) {
+     return lineGenerator(d.path);
+   })
+   .attr('fill', 'none')
+   .attr('stroke', function(d) {
+     return d.active ? d.color : '#CCC';
+   })
+   .attr('stroke-width', '3px')
+   .attr('marker-end', 'url(#arrow)')
+   .on('mouseover', function() {
+     d3.select(this).attr("stroke-width", '6px');
+   })
+   .on('mouseout', function() {
+     d3.select(this).attr("stroke-width", '3px');
+   })
+   .on('click', function(d) {
+     d.active = !d.active;
+     updateDenseConnectionCurves(svg, denseConnections);
+     modelId = calculateModelId(denseConnections);
+     updateHist(hist, data, dataIdx, modelId);
+   });
 
 
 const hist = svg.append('g')
@@ -226,4 +229,32 @@ document.getElementById('changeImageButton').onclick = function(){
   dataIdx = getRandomId(data['inputs'].length);
   updateImg(data, dataIdx);
   updateHist(hist, data, dataIdx, modelId);
-}
+};
+
+document.getElementById('configSequentialButton').onclick = function(){
+  denseConnections.forEach(c => c['active'] = false);
+  updateDenseConnectionCurves(svg, denseConnections);
+  modelId = calculateModelId(denseConnections);
+  updateHist(hist, data, dataIdx, modelId);
+};
+
+document.getElementById('configDensenetButton').onclick = function(){
+  denseConnections.forEach(c => {
+    if (c['id']==0 || c['id']==1 || c['id']==4 || c['id']==9) {
+      c['active'] = true;
+    }
+    else {
+      c['active'] = false;
+    }
+  });
+  updateDenseConnectionCurves(svg, denseConnections);
+  modelId = calculateModelId(denseConnections);
+  updateHist(hist, data, dataIdx, modelId);
+};
+
+document.getElementById('configCondensenetButton').onclick = function(){
+  denseConnections.forEach(c => c['active'] = true);
+  updateDenseConnectionCurves(svg, denseConnections);
+  modelId = calculateModelId(denseConnections);
+  updateHist(hist, data, dataIdx, modelId);
+};
