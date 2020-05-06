@@ -1,7 +1,7 @@
 import * as d3 from 'd3';
 
-const histWidth = 230;
-const histHeight = 360;
+const histWidth = 220;
+const histHeight = 400;
 
 export function getRandomId(count) {
   return Math.floor(Math.random() * count);
@@ -10,7 +10,7 @@ export function getRandomId(count) {
 
 export function plotImg(data, dataIdx) {
   const imgCanvas = d3.select('#inputImg')
-    .style('top', '316px')
+    .style('top', '236px')
     .style('left', '10px')
     .style('width', '128px')
     .style('height', '128px')

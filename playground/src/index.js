@@ -9,7 +9,7 @@ var dataIdx = getRandomId(data['inputs'].length);
 var modelId = 0;
 
 const width = 1080;
-const height = 520;
+const height = 480;
 
 
 const svg = d3.select('#d3')
@@ -23,7 +23,7 @@ svg.style('margin', 'auto');
 
 // input image
 svg.append('rect')
-  .attr('transform', 'translate(10, 316)')
+  .attr('transform', 'translate(10, 236)')
   .attr('width', 128)
   .attr('height', 128)
   .attr('stroke', 'black')
@@ -48,7 +48,7 @@ const l2 = 10;
 const d = 4;
 
 let x = 138;
-let y = 380;
+let y = 300;
 
 // define arrowhead marker
 const arrowPoints = [[0, 0], [0, 10], [10, 5]];
@@ -98,13 +98,13 @@ plotData.forEach((data, i) => {
   data['pooling'].forEach((type, j) => {
     svg.append('rect')
       .attr('transform', 'translate('+(x)+','+(y-10*(data['pooling'].length-2*j))+')')
-      .attr('width', 8)
+      .attr('width', 10)
       .attr('height', 20)
       .attr('stroke', 'black')
       .attr('fill', type=='i' ? '#48F' : (type=='2' ? '#8AF' : '#BBF'));
     denseCurveEnds.push({'layer':i, 'type':type, 'point':[x-5, y-10*(data['pooling'].length-2*j-1)]})
   });
-  x = x + 8;
+  x = x + 10;
 
   svg.append('path')
     .attr('d', d3.line()([[x, y], [x+l2, y]]))
@@ -155,15 +155,17 @@ x = x + 10;
 
 // --- output connection ---
 svg.append('path')
-  .attr('d', d3.line()([[x, y], [x+45, y]]))
+  .attr('d', d3.line()([[x, y], [x+35, y]]))
   .attr('marker-end', 'url(#arrow)')
   .attr('stroke', 'black')
   .attr('fill', 'none')
   .attr('stroke-width', '3px');
-x = x + l2 + 45 + 5;
+x = x + l2 + 30 + 5;
 
 
-// --- calculate dense connection curves ---
+// --- dense connection curves ---
+
+// calculate dense connection curves
 var denseConnections = [];
 var idxCount = 0;
 for (var i=0; i<plotData.length; i++) {
@@ -221,43 +223,117 @@ svg.selectAll()
 
 
 const hist = svg.append('g')
-  .attr('transform', 'translate(800,70)');
+  .attr('transform', 'translate(800,50)');
 
 plotHist(hist, data, dataIdx, modelId);
 
-document.getElementById('changeImageButton').onclick = function(){
-  dataIdx = getRandomId(data['inputs'].length);
-  updateImg(data, dataIdx);
-  updateHist(hist, data, dataIdx, modelId);
-};
 
-document.getElementById('configSequentialButton').onclick = function(){
-  denseConnections.forEach(c => c['active'] = false);
-  updateDenseConnectionCurves(svg, denseConnections);
-  modelId = calculateModelId(denseConnections);
-  updateHist(hist, data, dataIdx, modelId);
-};
+svg.append('text')
+  .attr('transform', 'translate(10,20)')
+  .text('DATA')
 
-document.getElementById('configDensenetButton').onclick = function(){
-  denseConnections.forEach(c => {
-    if (c['id']==0 || c['id']==1 || c['id']==4 || c['id']==9) {
-      c['active'] = true;
-    }
-    else {
-      c['active'] = false;
-    }
+svg.append('text')
+  .attr('transform', 'translate(180,20)')
+  .text('MODEL')
+
+svg.append('text')
+  .attr('transform', 'translate(720,20)')
+  .text('OUTPUT')
+
+
+// change image button
+const changeImageButton = svg.append('g')
+  .attr('transform', 'translate(10,400)')
+  .attr('cursor', 'pointer')
+  .on('click', function() {
+    dataIdx = getRandomId(data['inputs'].length);
+    updateImg(data, dataIdx);
+    updateHist(hist, data, dataIdx, modelId);
   });
-  updateDenseConnectionCurves(svg, denseConnections);
-  modelId = calculateModelId(denseConnections);
-  updateHist(hist, data, dataIdx, modelId);
-};
 
-document.getElementById('configCondensenetButton').onclick = function(){
-  denseConnections.forEach(c => c['active'] = true);
-  updateDenseConnectionCurves(svg, denseConnections);
-  modelId = calculateModelId(denseConnections);
-  updateHist(hist, data, dataIdx, modelId);
-};
+changeImageButton.append('rect')
+  .attr('width', '128px')
+  .attr('height', '48px')
+  .attr('fill', '#183D4E');
+
+changeImageButton.append('text')
+  .attr('fill', 'white')
+  .attr('x', '64px')
+  .attr('y', '28px')
+  .attr('text-anchor', 'middle')
+  .text('Change Image');
+
+
+
+// change model buttons
+const configSequentialButton = svg.append('g')
+  .attr('transform', 'translate(200,400)')
+  .attr('cursor', 'pointer')
+  .on('click', function() {
+    denseConnections.forEach(c => c['active'] = false);
+    updateDenseConnectionCurves(svg, denseConnections);
+    modelId = calculateModelId(denseConnections);
+    updateHist(hist, data, dataIdx, modelId);
+  });
+
+configSequentialButton.append('rect')
+  .attr('width', '128px')
+  .attr('height', '48px')
+  .attr('fill', '#183D4E');
+
+configSequentialButton.append('text')
+  .attr('fill', 'white')
+  .attr('x', '64px')
+  .attr('y', '28px')
+  .attr('text-anchor', 'middle')
+  .text('Sequential');
+
+const configDensenetButton = svg.append('g')
+  .attr('transform', 'translate(350,400)')
+  .attr('cursor', 'pointer')
+  .on('click', function() {
+    denseConnections.forEach(c => {
+      c['active'] = (c['id']==0 || c['id']==1 || c['id']==4 || c['id']==9) ? true : false;
+    });
+    updateDenseConnectionCurves(svg, denseConnections);
+    modelId = calculateModelId(denseConnections);
+    updateHist(hist, data, dataIdx, modelId);
+  });
+
+configDensenetButton.append('rect')
+  .attr('width', '128px')
+  .attr('height', '48px')
+  .attr('fill', '#183D4E');
+
+configDensenetButton.append('text')
+  .attr('fill', 'white')
+  .attr('x', '64px')
+  .attr('y', '28px')
+  .attr('text-anchor', 'middle')
+  .text('Densenet');
+
+const configCondensenetButton = svg.append('g')
+  .attr('transform', 'translate(500,400)')
+  .attr('cursor', 'pointer')
+  .on('click', function() {
+    denseConnections.forEach(c => c['active'] = true);
+    updateDenseConnectionCurves(svg, denseConnections);
+    modelId = calculateModelId(denseConnections);
+    updateHist(hist, data, dataIdx, modelId);
+  });
+
+configCondensenetButton.append('rect')
+  .attr('width', '128px')
+  .attr('height', '48px')
+  .attr('fill', '#183D4E');
+
+configCondensenetButton.append('text')
+  .attr('fill', 'white')
+  .attr('x', '64px')
+  .attr('y', '28px')
+  .attr('text-anchor', 'middle')
+  .text('Condensenet');
+
 
 document.getElementById('more').onclick = function(){
   window.scrollTo({
