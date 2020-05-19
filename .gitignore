@@ -8,3 +8,5 @@ nohup.out
 .ipynb_checkpoints
 
 node_modules
+
+.env
