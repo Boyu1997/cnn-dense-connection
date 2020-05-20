@@ -5,11 +5,16 @@ This project is an inquiry into DenseNet and CondenseNet, specifically, the effe
 
 ## Contents
 
-1. [Preliminary](#preliminary)
-2. [Usage](#usage)
-3. [Results](#results)
-4. [Playground](#playground)
+1. [Playground](#playground)
+2. [Preliminary](#preliminary)
+3. [Usage](#usage)
+4. [Results](#results)
 5. [Acknowledgement](#acknowledgement)
+
+
+## Playground
+
+Interactive web application to show how dense connections impact model performance using a 6-layers CondenseNet architecture. Access the application here: [playground.condensenet.boyu.io](http://playground.condensenet.boyu.io/)
 
 
 ## Preliminary
@@ -78,11 +83,6 @@ TBD
 ├── experiment.sh # bash script, train and test all models in this report
 └── main.py # entry point from network training
 ```
-
-
-## Playground
-
-Interactive web application to show how dense connections impact model performance using a 6-layers CondenseNet architecture. Access the application here: [playground.condensenet.boyu.io](http://playground.condensenet.boyu.io/)
 
 
 ## Results
