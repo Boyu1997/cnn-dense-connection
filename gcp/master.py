@@ -6,19 +6,21 @@ from google.cloud import storage
 
 from helper import get_bucket, create_instance
 
+
+# load environment variables
 load_dotenv()
 PROJECT = os.getenv('PROJECT')
 ZONE = os.getenv('ZONE')
 BUCKET_NAME = os.getenv('BUCKET_NAME')
 
+
+# validate cloud storage
 client = storage.Client()
 bucket = get_bucket(client, BUCKET_NAME)
 print ("Obtained storage bucket \'{:s}\'".format(bucket.name))
 
 
-compute = discovery.build('compute', 'v1')
-
-
+# configurate models
 models = [
     {
         'vm_name': 'batch-1',
@@ -41,9 +43,10 @@ models = [
 ]
 
 
-for model in models:
+# start vm
+compute = discovery.build('compute', 'v1')
 
-    print (json.dumps(model['model_config']))
+for model in models:
 
     env_string = ("PROJECT=\'{:s}\'\n".format(PROJECT) +
         "ZONE=\'{:s}\'\n".format(ZONE) +
@@ -51,14 +54,6 @@ for model in models:
         "BUCKET_NAME=\'{:s}\'\n".format(bucket.name) +
         "MODEL_NAME=\'{:s}\'\n".format(model['model_name']) +
         "MODEL_CONFIG=\'{:s}\'".format(json.dumps(model['model_config']).replace('\"', '\\\"')))
-
-    print (env_string)
-
-
-    print ("echo \"{:s}\" > .env\n".format(env_string))
-
-
-    break
 
     startup_script = ("#! /bin/bash\n" +
         "sudo apt-get update\n" +
