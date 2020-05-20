@@ -1,16 +1,21 @@
 import os
 from dotenv import load_dotenv
-import googleapiclient.discovery
+from googleapiclient import discovery
+from google.cloud import storage
 
-from helper import create_instance
+from helper import get_bucket, create_instance
 
 load_dotenv()
 PROJECT = os.getenv('PROJECT')
 ZONE = os.getenv('ZONE')
+BUCKET = os.getenv('BUCKET')
 
-compute = googleapiclient.discovery.build('compute', 'v1')
+client = storage.Client()
+bucket = get_bucket(client, BUCKET)
+print (bucket.name)
 
 
+compute = discovery.build('compute', 'v1')
 
 names = ['batch-1', 'batch-2']
 
@@ -21,10 +26,9 @@ for name in names:
         'sudo apt-get install -y git\n' +
         'git clone https://github.com/Boyu1997/cnn-dense-connection\n' +
         'cd /cnn-dense-connection/gcp\n' +
-        'echo \"PROJECT=\'{:s}\'\nZONE=\'{:s}\'\nNAME=\'{:s}\'\" > .env\n'.format(PROJECT, ZONE, name) +
+        'echo \"PROJECT=\'{:s}\'\nZONE=\'{:s}\'\nNAME=\'{:s}\'\nBUCKET=\'{:s}\'\" > .env\n'.format(PROJECT, ZONE, name, bucket.name) +
         'pip3 install -r requirements.txt\n' +
         'python3 batch.py')
-
 
     response = create_instance(compute, PROJECT, ZONE, name, startup_script)
     print (response)

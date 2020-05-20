@@ -1,3 +1,20 @@
+from google.api_core.exceptions import NotFound, Conflict, Forbidden
+
+
+def get_bucket(client, name):
+    try:
+        bucket = client.get_bucket(name)
+    except NotFound:
+        try:
+            bucket = client.create_bucket(name)
+        except Conflict:
+            raise RuntimeError('Storage bucket name \'{:s}\' already exists'.format(name))
+    except Forbidden:
+        raise RuntimeError('No access to storage bucket \'{:s}\''.format(name))
+
+    return bucket
+
+
 def create_instance(compute, project, zone, name, startup_script):
 
     # machine = 'n1-standard-1'
