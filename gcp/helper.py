@@ -30,6 +30,13 @@ def create_instance(compute, project, zone, name, startup_script):
                 {'type': 'ONE_TO_ONE_NAT', 'name': 'External NAT'}
             ]
         }],
+        'serviceAccounts': [{
+            'email': 'default',
+            'scopes': [
+                'https://www.googleapis.com/auth/compute',
+                'https://www.googleapis.com/auth/devstorage.read_write'
+            ]
+        }],
         'scheduling': {
             'onHostMaintenance': 'terminate'
         },
@@ -58,16 +65,10 @@ def create_instance(compute, project, zone, name, startup_script):
         zone=zone,
         body=config)
     response = request.execute()
-    return response
-
-
-def get_instance(compute, project, zone, name):
-    request = compute.instances().get(
-        project=project,
-        zone=zone,
-        instance=name)
-    response = request.execute()
-    return response
+    if response['status'] == 'RUNNING':
+        return 'success'
+    else:
+        return 'error'
 
 
 def delete_instance(compute, project, zone, name):
@@ -77,4 +78,7 @@ def delete_instance(compute, project, zone, name):
         zone=zone,
         instance=name)
     response = request.execute()
-    return response
+    if response['status'] == 'RUNNING':
+        return 'success'
+    else:
+        return 'error'
