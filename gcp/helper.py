@@ -8,9 +8,9 @@ def get_bucket(client, name):
         try:
             bucket = client.create_bucket(name)
         except Conflict:
-            raise RuntimeError('Storage bucket name \'{:s}\' already exists'.format(name))
+            raise RuntimeError("Storage bucket name \'{:s}\' already exists".format(name))
     except Forbidden:
-        raise RuntimeError('No access to storage bucket \'{:s}\''.format(name))
+        raise RuntimeError("No access to storage bucket \'{:s}\'".format(name))
 
     return bucket
 
