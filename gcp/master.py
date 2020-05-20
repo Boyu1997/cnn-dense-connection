@@ -34,4 +34,4 @@ for name in names:
     if response == 'success':
         print ("Successfully created vm instance \'{:s}\'".format(name))
     else:
-        raise RuntimeError("Unable to create vm instance \'{:s}\'".format(name)))
+        raise RuntimeError("Unable to create vm instance \'{:s}\'".format(name))
