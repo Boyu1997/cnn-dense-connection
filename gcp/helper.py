@@ -51,7 +51,8 @@ def create_instance(compute, project, zone, name, startup_script):
             'email': 'default',
             'scopes': [
                 'https://www.googleapis.com/auth/compute',
-                'https://www.googleapis.com/auth/devstorage.read_write'
+                'https://www.googleapis.com/auth/devstorage.read_write',
+                'https://www.googleapis.com/auth/logging.write'
             ]
         }],
         'scheduling': {
