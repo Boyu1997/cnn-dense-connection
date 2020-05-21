@@ -25,7 +25,7 @@ from main import main, Args
 
 
 # train model
-main(model_config)
+# main(model_config)
 
 
 # save data to cloud storage

@@ -59,7 +59,11 @@ for model in models:
         "sudo apt-get update\n" +
         "sudo apt-get install -y git\n" +
         "git clone https://github.com/Boyu1997/cnn-dense-connection\n" +
-        "cd /cnn-dense-connection/gcp\n" +
+        "cd /cnn-dense-connection\n" +
+        "python3 -m venv venv\n" +
+        "source venv/bin/activate\n" +
+        "pip3 install -r requirements.txt\n" +
+        "cd gcp\n" +
         "echo \"{:s}\" > .env\n".format(env_string) +
         "pip3 install -r requirements.txt\n" +
         "python3 batch.py")
