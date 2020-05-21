@@ -58,11 +58,7 @@ class Args():
 
 
 def main(args_dict):
-    if isinstance(args_dict, dict):
-        args = Args(args_dict)
-    else:
-        print ("No model configuration, using default..")
-        args = Args(dict())
+    args = Args(args_dict)
     print (args)
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -78,4 +74,4 @@ def main(args_dict):
 
 
 if __name__ == '__main__':
-    main(args)
+    main({})
