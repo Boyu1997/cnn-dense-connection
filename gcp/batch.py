@@ -25,7 +25,9 @@ from main import main, Args
 
 
 # train model
-# main(model_config)
+print ("Start batch work for model \'{:s}\'".format(MODEL_NAME))
+print ("Training model...")
+main(model_config)
 
 
 # save data to cloud storage
