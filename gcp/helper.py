@@ -24,10 +24,11 @@ def create_instance(compute, project, zone, name, startup_script):
     # gpu = 'nvidia-tesla-p100'
     # gpu = 'nvidia-tesla-v100'
 
-    # get latest pytorch disk image with gpu
-    image = 'pytorch-latest-gpu'
+    # get deep learning disk image with gpu
+    image_project ='deeplearning-platform-release'
+    image_family = 'common-cu101'
     image_response = compute.images().getFromFamily(
-        project='deeplearning-platform-release', family=image).execute()
+        project=image_project, family=image_family).execute()
     source_image = image_response['selfLink']
 
     # instance config
