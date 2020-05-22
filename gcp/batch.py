@@ -3,7 +3,8 @@ import sys
 import json
 from dotenv import load_dotenv
 from googleapiclient import discovery
-from google.cloud import storage
+import google.cloud.logging
+import google.cloud.storage
 
 from helper import get_bucket, delete_instance
 
@@ -24,6 +25,17 @@ sys.path.append('..')
 from main import main, Args
 
 
+# setup logging
+logging_client = google.cloud.logging.Client()
+logging_client.get_default_handler()
+logging_client.setup_logging()
+
+import logging
+
+logging.warning("test logging connection")
+sys.stdout.write = logging.info
+
+
 # train model
 print ("Start batch work for model \'{:s}\'".format(MODEL_NAME))
 print ("Training model...")
@@ -31,8 +43,8 @@ main(model_config)
 
 
 # save data to cloud storage
-client = storage.Client()
-bucket = get_bucket(client, BUCKET_NAME)
+storage_client = google.cloud.storage.Client()
+bucket = get_bucket(storage_client, BUCKET_NAME)
 blob = bucket.blob('{:s}/test.json'.format(MODEL_NAME))
 
 data = {'test': 'success'}
