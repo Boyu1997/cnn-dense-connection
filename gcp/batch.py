@@ -1,6 +1,7 @@
 import os
 import sys
 import json
+import logging
 from dotenv import load_dotenv
 from googleapiclient import discovery
 import google.cloud.logging
@@ -30,10 +31,22 @@ logging_client = google.cloud.logging.Client()
 logging_client.get_default_handler()
 logging_client.setup_logging()
 
-import logging
+class StreamToLogger():
+    def __init__(self, level='debug'):
+        self.level = level
 
-logging.warning("test logging connection")
-sys.stdout.write = logging.info
+    def write(self, text):
+        if text != "" and text != " " and text != "\n" and text != " \n":
+            text = "[{:s}]: {:s}".format(VM_NAME, text)
+            if self.level == 'info':
+                logging.info(text)
+            elif self.level == 'error':
+                logging.error(test)
+            else:
+                logging.debug(test)
+
+sys.stderr = StreamToLogger('error')
+sys.stdout = StreamToLogger('info')
 
 
 # train model
