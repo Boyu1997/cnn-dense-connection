@@ -58,7 +58,7 @@ for model in models:
     startup_script = ("#! /bin/bash\n" +
         "sudo apt-get update\n" +
         "sudo apt-get install -y git\n" +
-        "sudo apt-get install python3-venv\n" +
+        "sudo apt-get install -y python3-venv\n" +
         "git clone https://github.com/Boyu1997/cnn-dense-connection\n" +
         "cd /cnn-dense-connection\n" +
         "python3 -m venv venv\n" +
