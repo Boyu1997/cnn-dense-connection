@@ -1,3 +1,6 @@
+import time
+import shlex
+import subprocess
 from google.api_core.exceptions import NotFound, Conflict, Forbidden
 
 
@@ -26,7 +29,8 @@ def create_instance(compute, project, zone, name, startup_script):
 
     # get deep learning disk image with gpu
     image_project ='deeplearning-platform-release'
-    image_family = 'common-cu101'
+    image_family = 'pytorch-latest-gpu'
+    # image_family = 'common-cu101'
     image_response = compute.images().getFromFamily(
         project=image_project, family=image_family).execute()
     source_image = image_response['selfLink']
@@ -83,11 +87,28 @@ def create_instance(compute, project, zone, name, startup_script):
         project=project,
         zone=zone,
         body=config)
-    response = request.execute()
-    if response['status'] == 'RUNNING':
-        return 'success'
-    else:
-        return 'error'
+    operation = request.execute()
+    return operation
+
+
+def wait_for_operations(compute, project, zone, operation_names):
+    results = []
+    while len(operation_names) > 0:
+        completed = []
+        for name in operation_names:
+            result = compute.zoneOperations().get(
+                project=project,
+                zone=zone,
+                operation=name).execute()
+            if result['status'] == 'DONE':
+                completed.append(name)
+                results.append(result)
+                print ("Operation \'{:s}\' complete".format(name))
+        for c in completed:
+            operation_names.remove(c)
+        time.sleep(5)
+    print ("All operations complete")
+    return results
 
 
 def delete_instance(compute, project, zone, name):
@@ -101,3 +122,10 @@ def delete_instance(compute, project, zone, name):
         return 'success'
     else:
         return 'error'
+
+
+def bash(command):
+    print ("[bash command] {:s}".format(command))
+    process = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE)
+    output = process.communicate()
+    return output

@@ -1,10 +1,11 @@
 import os
 import json
+import time
 from dotenv import load_dotenv
 from googleapiclient import discovery
 from google.cloud import storage
 
-from helper import get_bucket, create_instance
+from helper import get_bucket, create_instance, wait_for_operations, bash
 
 
 # load environment variables
@@ -45,9 +46,35 @@ models = [
 
 # start vm
 compute = discovery.build('compute', 'v1')
+operation_names = []
 
 for model in models:
+    startup_script = ("#! /bin/bash\n" +
+        "sudo apt-get update\n" +
+        "sudo apt-get install -y git")
+    operation = create_instance(compute, PROJECT, ZONE, model['vm_name'], startup_script)
+    if operation['status'] != 'RUNNING':
+        raise RuntimeError("Unable to create vm instance \'{:s}\'".format(model['vm_name']))
+    operation_names.append(operation['name'])
 
+print("Waiting for instances to start...")
+results = wait_for_operations(compute, PROJECT, ZONE, operation_names)
+
+errors = []
+for model, result in zip(models, results):
+    if 'error' in result:
+        print ("Unable to create VM instance \'{:s}\'".format(model['vm_name']))
+        print ("Error: {:s}".format(result['error']['errors'][0]['message']))
+        errors.append(model['vm_name'])
+
+models = list(filter(lambda x: x['vm_name'] not in errors, models))
+print ("Create vm result: success={:d}, failure={:d}".format(len(models), len(errors)))
+
+
+print ("Wait 180 seconds for vm initialization...")
+time.sleep(180)
+
+for model in models:
     env_string = ("PROJECT=\'{:s}\'\n".format(PROJECT) +
         "ZONE=\'{:s}\'\n".format(ZONE) +
         "VM_NAME=\'{:s}\'\n".format(model['vm_name']) +
@@ -55,24 +82,21 @@ for model in models:
         "MODEL_NAME=\'{:s}\'\n".format(model['model_name']) +
         "MODEL_CONFIG=\'{:s}\'".format(json.dumps(model['model_config']).replace('\"', '\\\"')))
 
-    startup_script = ("#! /bin/bash\n" +
-        "sudo apt-get update\n" +
-        "sudo apt-get install -y git\n" +
-        "sudo apt-get install -y python3-venv\n" +
-        "git clone https://github.com/Boyu1997/cnn-dense-connection\n" +
-        "cd /cnn-dense-connection\n" +
-        "python3 -m venv venv\n" +
-        "source venv/bin/activate\n" +
-        "pip3 install -r requirements.txt\n" +
-        # special installation for cuda101 support
-        "pip3 install torch==1.5.0+cu101 torchvision==0.6.0+cu101 -f https://download.pytorch.org/whl/torch_stable.html\n" +
-        "cd gcp\n" +
-        "echo \"{:s}\" > .env\n".format(env_string) +
+    bash_commands = ("git clone https://github.com/Boyu1997/cnn-dense-connection\n" +
+        "cd cnn-dense-connection/gcp\n" +
+        "echo \"{:s}\" > .env && ".format(env_string) +
         "pip3 install -r requirements.txt\n" +
         "python3 batch.py")
 
-    response = create_instance(compute, PROJECT, ZONE, model['vm_name'], startup_script)
-    if response == 'success':
-        print ("Successfully created vm instance \'{:s}\'".format(model['vm_name']))
-    else:
-        raise RuntimeError("Unable to create vm instance \'{:s}\'".format(model['vm_name']))
+    file_path = "{:s}.sh".format(model['vm_name'])
+    f = open(file_path, "w")
+    f.write(bash_commands)
+    f.close()
+
+    output = bash("gcloud compute scp {:s} {:s}:~".format(file_path, model['vm_name']))
+    print (output)
+
+    os.remove(file_path)
+
+    output = bash("gcloud compute ssh {:s} --command=\"bash {:s}\"".format(model['vm_name'], file_path))
+    print (output)
