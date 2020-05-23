@@ -18,7 +18,7 @@ def get_bucket(client, name):
     return bucket
 
 
-def create_instance(compute, project, zone, name, startup_script):
+def create_instance(compute, project, zone, name):
 
     # machine = 'n1-standard-1'
     machine = 'n1-highmem-2'
@@ -72,10 +72,6 @@ def create_instance(compute, project, zone, name, startup_script):
                 {
                     'key': 'install-nvidia-driver',
                     'value': 'True'
-                },
-                {
-                    'key': 'startup-script',
-                    'value': startup_script
                 }
             ],
         }
