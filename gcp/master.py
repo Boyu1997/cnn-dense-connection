@@ -71,6 +71,7 @@ print ("Create vm result: success={:d}, failure={:d}".format(len(models), len(er
 print ("Wait 180 seconds for vm initialization...")
 time.sleep(180)
 
+master_bash = ""
 for model in models:
     env_string = ("PROJECT=\'{:s}\'\n".format(PROJECT) +
         "ZONE=\'{:s}\'\n".format(ZONE) +
@@ -97,5 +98,11 @@ for model in models:
 
     os.remove(file_path)
 
-    output = bash("gcloud compute ssh {:s} --zone={:s} --command=\"bash {:s}\"".format(model['vm_name'], ZONE, file_path))
-    print (output)
+    master_bash += "gcloud compute ssh {:s} --zone={:s} --command=\"bash {:s}\"\n".format(model['vm_name'], ZONE, file_path)
+
+f = open("bash.sh", "w")
+f.write(master_bash)
+f.close()
+
+output = bash("bash bash.sh")
+print (output)
