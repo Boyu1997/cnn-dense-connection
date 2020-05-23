@@ -93,10 +93,10 @@ for model in models:
     f.write(bash_commands)
     f.close()
 
-    output = bash("gcloud compute scp {:s} {:s}:~".format(file_path, model['vm_name']))
+    output = bash("gcloud compute scp {:s} {:s}:~ --zone={:s}".format(file_path, model['vm_name'], ZONE))
     print (output)
 
     os.remove(file_path)
 
-    output = bash("gcloud compute ssh {:s} --command=\"bash {:s}\"".format(model['vm_name'], file_path))
+    output = bash("gcloud compute ssh {:s} --zone={:s} --command=\"bash {:s}\"".format(model['vm_name'], ZONE, file_path))
     print (output)
