@@ -64,6 +64,8 @@ for model in models:
         "python3 -m venv venv\n" +
         "source venv/bin/activate\n" +
         "pip3 install -r requirements.txt\n" +
+        # special installation for cuda101 support
+        "pip3 install torch==1.5.0+cu101 torchvision==0.6.0+cu101 -f https://download.pytorch.org/whl/torch_stable.html\n" +
         "cd gcp\n" +
         "echo \"{:s}\" > .env\n".format(env_string) +
         "pip3 install -r requirements.txt\n" +
