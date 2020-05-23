@@ -2,8 +2,8 @@ import sys
 # import model training scripts
 # temporary fix of sys path
 # work only on 'pytorch-latest-gpu' image
-sys.path = ['', '/opt/conda/lib/python37.zip', '/opt/conda/lib/python3.7', '/opt/conda/lib/python3.7/lib-dynload', '/opt/conda/lib/python3.7/site-packages']
 sys.path.append('..')
+print (sys.path)
 
 import os
 import json

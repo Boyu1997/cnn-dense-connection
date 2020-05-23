@@ -49,10 +49,7 @@ compute = discovery.build('compute', 'v1')
 operation_names = []
 
 for model in models:
-    startup_script = ("#! /bin/bash\n" +
-        "sudo apt-get update\n" +
-        "sudo apt-get install -y git")
-    operation = create_instance(compute, PROJECT, ZONE, model['vm_name'], startup_script)
+    operation = create_instance(compute, PROJECT, ZONE, model['vm_name'])
     if operation['status'] != 'RUNNING':
         raise RuntimeError("Unable to create vm instance \'{:s}\'".format(model['vm_name']))
     operation_names.append(operation['name'])
@@ -82,7 +79,9 @@ for model in models:
         "MODEL_NAME=\'{:s}\'\n".format(model['model_name']) +
         "MODEL_CONFIG=\'{:s}\'".format(json.dumps(model['model_config']).replace('\"', '\\\"')))
 
-    bash_commands = ("git clone https://github.com/Boyu1997/cnn-dense-connection\n" +
+    bash_commands = ("sudo apt-get update\n" +
+        "sudo apt-get install -y git\n" +
+        "git clone https://github.com/Boyu1997/cnn-dense-connection\n" +
         "cd cnn-dense-connection/gcp\n" +
         "echo \"{:s}\" > .env && ".format(env_string) +
         "pip3 install -r requirements.txt\n" +
