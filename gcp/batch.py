@@ -39,7 +39,10 @@ sys.stdout = StreamToLogger('info')
 
 
 # import model training scripts
-sys.path.append('..')
+# sys.path.append('..')
+# temporary fix of sys path
+# work only on 'pytorch-latest-gpu' image
+sys.path = ['', '..', '/opt/conda/lib/python37.zip', '/opt/conda/lib/python3.7', '/opt/conda/lib/python3.7/lib-dynload', '/opt/conda/lib/python3.7/site-packages']
 print (sys.path)
 from main import main, Args
 
