@@ -63,7 +63,7 @@ def main(args_dict):
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     args.device = device
-    print ('Using device:', device)
+    print ('Using device: {:s}'.format(str(device)))
 
     # load data
     trainloader, validateloader, testloader, classes = load_data(args.bsize)
