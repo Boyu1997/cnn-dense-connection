@@ -21,11 +21,6 @@ MODEL_CONFIG = os.getenv('MODEL_CONFIG')
 model_config = json.loads(MODEL_CONFIG)
 
 
-# import model training scripts
-sys.path.append('..')
-from main import main, Args
-
-
 # setup logging
 logging_client = google.cloud.logging.Client()
 logging_client.get_default_handler()
@@ -38,15 +33,15 @@ class StreamToLogger():
     def write(self, text):
         if text != "" and text != " " and text != "\n" and text != " \n":
             text = "[{:s}]: {:s}".format(VM_NAME, text)
-            if self.level == 'info':
-                logging.info(text)
-            elif self.level == 'error':
-                logging.error(test)
-            else:
-                logging.debug(test)
+            logging.info(text)
 
-sys.stderr = StreamToLogger('error')
 sys.stdout = StreamToLogger('info')
+
+
+# import model training scripts
+sys.path.append('..')
+print (sys.path)
+from main import main, Args
 
 
 # train model
