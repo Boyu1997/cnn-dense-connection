@@ -12,6 +12,7 @@ from helper import get_bucket, create_instance, wait_for_operations, bash
 load_dotenv()
 PROJECT = os.getenv('PROJECT')
 ZONE = os.getenv('ZONE')
+VM_USER = os.getenv('VM_USER')
 BUCKET_NAME = os.getenv('BUCKET_NAME')
 
 
@@ -92,9 +93,9 @@ for model in models:
     f = open("bash.sh", "w")
     f.write(bash_commands)
     f.close()
-    output = bash("gcloud compute scp bash.sh {:s}:~ --zone={:s}".format(model['vm_name'], ZONE))
+    output = bash("gcloud compute scp bash.sh {:s}@{:s}:~ --zone={:s}".format(VM_USER, model['vm_name'], ZONE))
     os.remove("bash.sh")
 
     # ssh to vm and run training script
-    outcome = bash(("gcloud compute ssh {:s} --zone=us-west1-b --ssh-flag=\'-t\' ".format(model['vm_name']) +
+    outcome = bash(("gcloud compute ssh {:s}@{:s} --zone=us-west1-b --ssh-flag=\'-t\' ".format(VM_USER, model['vm_name']) +
         "--command=\"bash --login -c \'screen -dmS model && screen -S model -p 0 -X stuff \\\"bash bash.sh\\\\n\\\"\'\"\n"))
