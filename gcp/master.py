@@ -88,7 +88,7 @@ for model in models:
         "pip3 install -r requirements.txt\n" +
         "python3 batch.py")
 
-    upload bash file to vm
+    # upload bash file to vm
     f = open("bash.sh", "w")
     f.write(bash_commands)
     f.close()
