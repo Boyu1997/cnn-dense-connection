@@ -71,7 +71,7 @@ print ("Create vm result: success={:d}, failure={:d}".format(len(models), len(er
 print ("Wait 180 seconds for vm initialization...")
 time.sleep(180)
 
-master_bash = ""
+# run model on vm
 for model in models:
     env_string = ("PROJECT=\'{:s}\'\n".format(PROJECT) +
         "ZONE=\'{:s}\'\n".format(ZONE) +
@@ -88,21 +88,13 @@ for model in models:
         "pip3 install -r requirements.txt\n" +
         "python3 batch.py")
 
-    file_path = "{:s}.sh".format(model['vm_name'])
-    f = open(file_path, "w")
+    upload bash file to vm
+    f = open("bash.sh", "w")
     f.write(bash_commands)
     f.close()
+    output = bash("gcloud compute scp bash.sh {:s}:~ --zone={:s}".format(model['vm_name'], ZONE))
+    os.remove("bash.sh")
 
-    output = bash("gcloud compute scp {:s} {:s}:~ --zone={:s}".format(file_path, model['vm_name'], ZONE))
-    print (output)
-
-    os.remove(file_path)
-
-    master_bash += "gcloud compute ssh {:s} --zone={:s} --command=\"bash {:s}\"\n".format(model['vm_name'], ZONE, file_path)
-
-f = open("bash.sh", "w")
-f.write(master_bash)
-f.close()
-
-output = bash("bash bash.sh")
-print (output)
+    # ssh to vm and run training script
+    outcome = bash(("gcloud compute ssh {:s} --zone=us-west1-b --ssh-flag=\'-t\' ".format(model['vm_name']) +
+        "--command=\"bash --login -c \'screen -dmS model && screen -S model -p 0 -X stuff \\\"bash bash.sh\\\\n\\\"\'\"\n"))
