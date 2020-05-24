@@ -90,6 +90,7 @@ def create_instance(compute, project, zone, name):
 def wait_for_operations(compute, project, zone, operation_names):
     results = []
     while len(operation_names) > 0:
+        time.sleep(5)
         completed = []
         for name in operation_names:
             result = compute.zoneOperations().get(
@@ -102,7 +103,6 @@ def wait_for_operations(compute, project, zone, operation_names):
                 print ("Operation \'{:s}\' complete".format(name))
         for c in completed:
             operation_names.remove(c)
-        time.sleep(5)
     print ("All operations complete")
     return results
 
