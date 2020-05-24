@@ -73,6 +73,7 @@ print ("Wait 180 seconds for vm initialization...")
 time.sleep(180)
 
 # run model on vm
+master_bash = ""
 for model in models:
     env_string = ("PROJECT=\'{:s}\'\n".format(PROJECT) +
         "ZONE=\'{:s}\'\n".format(ZONE) +
@@ -97,5 +98,16 @@ for model in models:
     os.remove("bash.sh")
 
     # ssh to vm and run training script
-    outcome = bash(("gcloud compute ssh {:s}@{:s} --zone=us-west1-b --ssh-flag=\'-t\' ".format(VM_USER, model['vm_name']) +
-        "--command=\"bash --login -c \'screen -dmS model && screen -S model -p 0 -X stuff \\\"bash bash.sh\\\\n\\\"\'\"\n"))
+    master_bash += ("gcloud compute ssh {:s}@{:s} --zone=us-west1-b --ssh-flag=\'-t\' ".format(VM_USER, model['vm_name']) +
+        "--command=\"bash --login -c \'screen -dmS model && screen -S model -p 0 -X stuff \\\"bash bash.sh\\\\n\\\"\'\"\n")
+
+f = open("bash.sh", "w")
+f.write(master_bash)
+f.close()
+
+# temporary fix for dead screen
+print ("VM start and setup completed, run `bash bash.sh` to start model training")
+
+# use python to run the bash file will result in dead screens, skip for now
+# output = bash("bash bash.sh")
+# os.remove("bash.sh")
