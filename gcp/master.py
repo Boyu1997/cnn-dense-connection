@@ -97,6 +97,5 @@ for model in models:
     os.remove("bash.sh")
 
     # ssh to vm and run training script
-    ssh_string = "gcloud compute ssh {:s}@{:s} --zone=us-west1-b --ssh-flag=\"-t\"".format(VM_USER, model['vm_name'])
-    output = bash("{:s} --command=\"bash --login -c \'screen -dmS model\'\"".format(ssh_string))
-    output = bash("{:s} --command=\"bash --login -c \'screen -S model -p 0 -X stuff \\\"bash bash.sh\\\\n\\\"\'\"\n".format(ssh_string))
+    cmd = "gcloud compute ssh {:s}@{:s} --zone={:s} --ssh-flag=\'-t\'  --command=\"bash --login -c \'bash bash.sh\'\"".format(VM_USER, model['vm_name'], ZONE)
+    output = bash("nohup {:s} > nohup.out 2>&1 &".format(cmd))
