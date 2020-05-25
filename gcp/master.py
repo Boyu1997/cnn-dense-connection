@@ -26,38 +26,38 @@ print ("Obtained storage bucket \'{:s}\'".format(bucket.name))
 models = [
     {
         'vm_name': 'batch-1',
-        'model_name': 'cbr=0.2-seed=1',
+        'model_name': 'densenet',
         'model_config': {
             'cross_block_rate': 0.2,
-            'end_block_reduction_rate': 0.1,
+            'end_block_reduction_rate': 0.5,
             'seed': 1
         }
     },
     {
         'vm_name': 'batch-2',
-        'model_name': 'cbr=0.2-seed=2',
+        'model_name': 'dense-cbr=0.2-seed=1',
         'model_config': {
             'cross_block_rate': 0.2,
-            'end_block_reduction_rate': 0.1,
-            'seed': 2
+            'end_block_reduction_rate': 0.5,
+            'seed': 1
         }
     },
     {
         'vm_name': 'batch-3',
-        'model_name': 'cbr=0.2-seed=3',
+        'model_name': 'dense-cbr=0.2-seed=2',
         'model_config': {
             'cross_block_rate': 0.2,
-            'end_block_reduction_rate': 0.1,
-            'seed': 3
+            'end_block_reduction_rate': 0.5,
+            'seed': 2
         }
     },
     {
         'vm_name': 'batch-4',
-        'model_name': 'cbr=0.2-seed=4',
+        'model_name': 'dense-cbr=0.2-seed=3',
         'model_config': {
             'cross_block_rate': 0.2,
             'end_block_reduction_rate': 0.1,
-            'seed': 4
+            'seed': 3
         }
     }
 ]
