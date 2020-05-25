@@ -73,6 +73,7 @@ print ("Wait 180 seconds for vm initialization...")
 time.sleep(180)
 
 # run model on vm
+master_bash = ""
 for model in models:
     env_string = ("PROJECT=\'{:s}\'\n".format(PROJECT) +
         "ZONE=\'{:s}\'\n".format(ZONE) +
@@ -98,4 +99,10 @@ for model in models:
 
     # ssh to vm and run training script
     cmd = "gcloud compute ssh {:s}@{:s} --zone={:s} --ssh-flag=\'-t\'  --command=\"bash --login -c \'bash bash.sh\'\"".format(VM_USER, model['vm_name'], ZONE)
-    output = bash("nohup {:s} > nohup.out 2>&1 &".format(cmd))
+    master_bash += "nohup {:s} > {:s}.out 2>&1 &\n".format(cmd, model['vm_name'])
+
+f = open("bash.sh", "w")
+f.write(master_bash)
+f.close()
+output = bash("bash bash.sh")
+# os.remove("bash.sh")
