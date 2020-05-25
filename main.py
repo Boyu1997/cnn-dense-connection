@@ -24,7 +24,7 @@ class Args():
         self.bottleneck = args_dict['bottleneck'] if 'bottleneck' in args_dict else 4
 
         self.lr = args_dict['lr'] if 'lr' in args_dict else 1e-1
-        self.ep = args_dict['ep'] if 'ep' in args_dict else 120
+        self.ep = args_dict['ep'] if 'ep' in args_dict else 100
         self.optimizer = args_dict['optimizer'] if 'optimizer' in args_dict else 'adam'   # default = 'adam'; options = {'sgd', 'adam'}
         self.scheduler = args_dict['scheduler'] if 'scheduler' in args_dict else 'cos'   # default = 'cos'; options = {'none', 'clr', 'exp', 'mlr', 'cos'}
 

@@ -180,9 +180,9 @@ def train_model(model, trainloader, validateloader, testloader, device, args, pr
                 "(Training Time: {:.2f}s".format(training_time) +
                 "Running Learning Rate: {:.5f})\n".format(running_lr) +
                 "   Train - Loss: {:.4f}".format(training_loss) +
-                "Accuracy: {:.3f}\n".format(training_accuracy) +
+                " Accuracy: {:.3f}\n".format(training_accuracy) +
                 "   Validate - Loss: {:.4f}".format(validation_loss) +
-                "Accuracy: {:.3f}".format(validation_accuracy)))
+                " Accuracy: {:.3f}".format(validation_accuracy)))
 
         if early_stop.step(e+1, validation_loss):
             print ("Early stop at epoch {:d}, terminate training".format(early_stop.best_ep))
