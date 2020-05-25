@@ -8,6 +8,7 @@ print (sys.path)
 import os
 import json
 import logging
+from datetime import datetime
 from dotenv import load_dotenv
 from googleapiclient import discovery
 import google.cloud.logging
@@ -51,11 +52,12 @@ print ("Training model...")
 save_data = main(model_config)
 
 # save data to cloud storage
+d_name = "{:s}-{:s}".format(datetime.utcnow().strftime('%y%m%d-%H%M%SZ'), MODEL_NAME)
 storage_client = google.cloud.storage.Client()
 bucket = get_bucket(storage_client, BUCKET_NAME)
-blob = bucket.blob('{:s}/data.json'.format(MODEL_NAME))
+blob = bucket.blob('{:s}/data.json'.format(d_name))
 blob.upload_from_string(json.dumps(save_data))
-blob = bucket.blob('{:s}/best.pth'.format(MODEL_NAME))
+blob = bucket.blob('{:s}/best.pth'.format(d_name))
 blob.upload_from_filename(save_data['model_state_dict_path'])
 
 # delete vm instance after experiments
