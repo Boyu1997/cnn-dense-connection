@@ -57,7 +57,6 @@ models = [
         'model_config': {
             'cross_block_rate': 0.2,
             'end_block_reduction_rate': 0.1,
-            'ep': 3,
             'seed': 4
         }
     }
