@@ -48,17 +48,15 @@ sys.stdout = StreamToLogger('info')
 # train model
 print ("Start batch work for model \'{:s}\'".format(MODEL_NAME))
 print ("Training model...")
-main(model_config)
-
+save_data = main(model_config)
 
 # save data to cloud storage
 storage_client = google.cloud.storage.Client()
 bucket = get_bucket(storage_client, BUCKET_NAME)
-blob = bucket.blob('{:s}/test.json'.format(MODEL_NAME))
-
-data = {'test': 'success'}
-blob.upload_from_string(json.dumps(data))
-
+blob = bucket.blob('{:s}/data.json'.format(MODEL_NAME))
+blob.upload_from_string(json.dumps(save_data))
+blob = bucket.blob('{:s}/best.pth'.format(MODEL_NAME))
+blob.upload_from_filename(save_data['model_state_dict_path'])
 
 # delete vm instance after experiments
 compute = discovery.build('compute', 'v1')

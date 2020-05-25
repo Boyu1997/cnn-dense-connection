@@ -25,7 +25,7 @@ class Args():
         self.lr = args_dict['lr'] if 'lr' in args_dict else 1e-2
         self.ep = args_dict['ep'] if 'ep' in args_dict else 3
         self.optimizer = args_dict['optimizer'] if 'optimizer' in args_dict else 'adam'   # default = 'adam'; options = {'sgd', 'adam'}
-        self.scheduler = args_dict['scheduler'] if 'scheduler' in args_dict else 'cos'   # default = 'cos'; options = {'clr', 'exp', 'mlr', 'cos'}
+        self.scheduler = args_dict['scheduler'] if 'scheduler' in args_dict else 'none'   # default = 'none'; options = {'none', 'clr', 'exp', 'mlr', 'cos'}
 
         # training batch
         self.bsize = args_dict['bsize'] if 'bsize' in args_dict else 512
@@ -70,7 +70,8 @@ def main(args_dict):
 
     # model training
     densenet = DenseNet(args)
-    train_model(densenet, trainloader, validateloader, device, args)
+    save_data = train_model(densenet, trainloader, validateloader, testloader, device, args)
+    return save_data
 
 
 if __name__ == '__main__':
