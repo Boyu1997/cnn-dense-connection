@@ -23,10 +23,10 @@ class Args():
         self.group_3x3 = args_dict['group_3x3'] if 'group_3x3' in args_dict else 4
         self.bottleneck = args_dict['bottleneck'] if 'bottleneck' in args_dict else 4
 
-        self.lr = args_dict['lr'] if 'lr' in args_dict else 1e-2
+        self.lr = args_dict['lr'] if 'lr' in args_dict else 1e-1
         self.ep = args_dict['ep'] if 'ep' in args_dict else 120
         self.optimizer = args_dict['optimizer'] if 'optimizer' in args_dict else 'adam'   # default = 'adam'; options = {'sgd', 'adam'}
-        self.scheduler = args_dict['scheduler'] if 'scheduler' in args_dict else 'none'   # default = 'none'; options = {'none', 'clr', 'exp', 'mlr', 'cos'}
+        self.scheduler = args_dict['scheduler'] if 'scheduler' in args_dict else 'cos'   # default = 'cos'; options = {'none', 'clr', 'exp', 'mlr', 'cos'}
 
         # training batch
         self.bsize = args_dict['bsize'] if 'bsize' in args_dict else 512

@@ -149,7 +149,7 @@ def train_model(model, trainloader, validateloader, testloader, device, args, pr
         'validation_accuracy': [],
         'training_time': []
     }
-    early_stop = EarlyStop()
+    early_stop = EarlyStop(10)   # set early stoping wait to 10
     directory = './save/{:s}/train'.format(args.save_folder)   # directory for saving model
 
     for e in range(args.ep):
