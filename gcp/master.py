@@ -101,8 +101,10 @@ for model in models:
     cmd = "gcloud compute ssh {:s}@{:s} --zone={:s} --ssh-flag=\'-t\'  --command=\"bash --login -c \'bash bash.sh\'\"".format(VM_USER, model['vm_name'], ZONE)
     master_bash += "nohup {:s} > {:s}.out 2>&1 &\n".format(cmd, model['vm_name'])
 
+print ("Starting model training commands...")
 f = open("bash.sh", "w")
 f.write(master_bash)
 f.close()
 output = bash("bash bash.sh")
-# os.remove("bash.sh")
+os.remove("bash.sh")
+print ("Command start complete")
