@@ -18,7 +18,7 @@ class Args():
 
         # model hyperparameter
         self.stages = list(map(int, args_dict['stages'].split('-'))) if 'stages' in args_dict else [10,10,10]
-        self.growth = list(map(int, args_dict['growth'].split('-'))) if 'growth' in args_dict else [4,8,12]
+        self.growth = list(map(int, args_dict['growth'].split('-'))) if 'growth' in args_dict else [12,12,12]
         self.group_1x1 = args_dict['group_1x1'] if 'group_1x1' in args_dict else 4
         self.group_3x3 = args_dict['group_3x3'] if 'group_3x3' in args_dict else 4
         self.bottleneck = args_dict['bottleneck'] if 'bottleneck' in args_dict else 4
