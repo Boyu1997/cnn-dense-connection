@@ -185,7 +185,8 @@ def train_model(model, trainloader, validateloader, testloader, device, args, pr
                 "Accuracy: {:.3f}".format(validation_accuracy)))
 
         if early_stop.step(e+1, validation_loss):
-            print ("Early stop at epoch {:s}, terminate training".format(early_stop.best_ep))
+            print ("Early stop at epoch {:d}, terminate training".format(early_stop.best_ep))
+            break
 
 
     # load best model
