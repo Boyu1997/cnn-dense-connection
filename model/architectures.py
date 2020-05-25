@@ -45,7 +45,7 @@ class _DenseLayer(nn.Module):
         else:
             # select the dense connection indexs for previous block base on the cross-block connection rate
             sample_channels = in_block_channels - in_block_transition_channels
-            random.seed(41)   # use seed to make the random sample is reproducible
+            random.seed(args.seed)   # use seed to make the random sample is reproducible
             self.idx = random.sample(range(sample_channels), k=make_divisible(sample_channels*args.cross_block_rate, args.group_1x1))
 
             # add all indexs for all last layer transition and current layers

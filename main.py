@@ -13,17 +13,18 @@ class Args():
 
         # dense connection rate
         self.cross_block_rate = args_dict['cross_block_rate'] if 'cross_block_rate' in args_dict else 0.5   # default = 0.5; range = [0, 1]
-        self.end_block_reduction_rate = args_dict['end_block_reduction_rate'] if 'end_block_reduction_rate' in args_dict else 0.5   # default = 0.5; range = [0, 1]
+        self.end_block_reduction_rate = args_dict['end_block_reduction_rate'] if 'end_block_reduction_rate' in args_dict else 0.5   # default = 0.5; range = (0, 1]
+        self.seed = args_dict['seed'] if 'seed' in args_dict else 1   # seed for selecting random connections
 
         # model hyperparameter
-        self.stages = list(map(int, args_dict['stages'].split('-'))) if 'stages' in args_dict else [3,3,3]
+        self.stages = list(map(int, args_dict['stages'].split('-'))) if 'stages' in args_dict else [10,10,10]
         self.growth = list(map(int, args_dict['growth'].split('-'))) if 'growth' in args_dict else [4,8,12]
         self.group_1x1 = args_dict['group_1x1'] if 'group_1x1' in args_dict else 4
         self.group_3x3 = args_dict['group_3x3'] if 'group_3x3' in args_dict else 4
         self.bottleneck = args_dict['bottleneck'] if 'bottleneck' in args_dict else 4
 
         self.lr = args_dict['lr'] if 'lr' in args_dict else 1e-2
-        self.ep = args_dict['ep'] if 'ep' in args_dict else 3
+        self.ep = args_dict['ep'] if 'ep' in args_dict else 120
         self.optimizer = args_dict['optimizer'] if 'optimizer' in args_dict else 'adam'   # default = 'adam'; options = {'sgd', 'adam'}
         self.scheduler = args_dict['scheduler'] if 'scheduler' in args_dict else 'none'   # default = 'none'; options = {'none', 'clr', 'exp', 'mlr', 'cos'}
 
