@@ -14,7 +14,7 @@ This project is an inquiry into DenseNet and CondenseNet, specifically, the effe
 
 ## Playground
 
-Interactive web application to show how dense connections impact model performance using a 6-layers CondenseNet architecture. Access the application here: [playground.condensenet.boyu.io](http://playground.condensenet.boyu.io/)
+Interactive web application to show how dense connections impact model performance using a 6-layers CondenseNet architecture. Access the application here: [cnn-dense-connection.boyu.io](http://cnn-dense-connection.boyu.io/)
 
 
 ## Preliminary
